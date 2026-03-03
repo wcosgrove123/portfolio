@@ -207,12 +207,12 @@ scene.add(nucleusLight);
 
 const axisRadius = 4.0;
 const axisLightConfigs = [
-  { color: 0x0EA5E9, position: new THREE.Vector3( axisRadius, 0, 0) },
-  { color: 0x0EA5E9, position: new THREE.Vector3(-axisRadius, 0, 0) },
-  { color: 0xEC4899, position: new THREE.Vector3(0,  axisRadius, 0) },
-  { color: 0xEC4899, position: new THREE.Vector3(0, -axisRadius, 0) },
-  { color: 0xA855F7, position: new THREE.Vector3(0, 0,  axisRadius) },
-  { color: 0xA855F7, position: new THREE.Vector3(0, 0, -axisRadius) },
+  { color: 0xC5DCF0, position: new THREE.Vector3( axisRadius, 0, 0) },
+  { color: 0xC5DCF0, position: new THREE.Vector3(-axisRadius, 0, 0) },
+  { color: 0xC5DCF0, position: new THREE.Vector3(0,  axisRadius, 0) },
+  { color: 0xC5DCF0, position: new THREE.Vector3(0, -axisRadius, 0) },
+  { color: 0xC5DCF0, position: new THREE.Vector3(0, 0,  axisRadius) },
+  { color: 0xC5DCF0, position: new THREE.Vector3(0, 0, -axisRadius) },
 ];
 axisLightConfigs.forEach(cfg => {
   const l = new THREE.PointLight(cfg.color, 1.0, 6);
@@ -279,7 +279,7 @@ scene.add(nucleusSphere);
 // 2. GYROSCOPE RINGS
 // ============================================================================
 const ringGroup  = new THREE.Group();
-const ringColors = [0x0EA5E9, 0xEC4899, 0xA855F7];
+const ringColors = [0xC5DCF0, 0xC5DCF0, 0xC5DCF0];
 for (let i = 0; i < 3; i++) {
   const geo = new THREE.TorusGeometry(axisRadius, 0.04, 16, 128);
   const mat = new THREE.MeshStandardMaterial({
