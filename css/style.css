@@ -895,6 +895,34 @@ main {
 
 
 /* ============================================================
+   PAGE-SPECIFIC: Currere
+   ============================================================ */
+.currere-hero {
+  background: #1d1a10;
+  color: #f5efe3;
+  padding-bottom: var(--space-10);
+}
+
+.currere-hero h1,
+.currere-hero h2,
+.currere-hero h3 {
+  color: #f5efe3;
+}
+
+.currere-hero .lead {
+  color: rgba(245, 239, 227, 0.80);
+}
+
+.currere-hero .label {
+  color: var(--color-accent);
+}
+
+.currere-hero .hero-accent {
+  color: var(--color-accent);
+}
+
+
+/* ============================================================
    PAGE-SPECIFIC: Research
    ============================================================ */
 .research-hero {
