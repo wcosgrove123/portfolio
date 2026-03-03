@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initActiveNav();
   initSmoothReveal();
   initCaseStudyTabs();
+  initHeaderScroll();
+  initScrollProgress();
 });
 
 
@@ -61,6 +63,8 @@ function initSmoothReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        const delay = entry.target.dataset.delay || 0;
+        entry.target.style.transitionDelay = delay + 'ms';
         entry.target.classList.add('revealed');
         observer.unobserve(entry.target);
       }
@@ -71,6 +75,28 @@ function initSmoothReveal() {
   });
 
   elements.forEach(el => observer.observe(el));
+}
+
+
+/* --- Header scroll shadow --- */
+function initHeaderScroll() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+
+/* --- Scroll progress bar --- */
+function initScrollProgress() {
+  const bar = document.querySelector('.scroll-progress');
+  if (!bar) return;
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = max > 0 ? (window.scrollY / max * 100) + '%' : '0%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 

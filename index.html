@@ -122,6 +122,7 @@
         <a href="credentials.html">Credentials</a>
       </nav>
     </div>
+    <div class="scroll-progress" aria-hidden="true"></div>
   </header>
 
   <!-- ==================== MAIN ==================== -->
@@ -131,14 +132,14 @@
     <section class="hero">
       <div class="container hero-container">
         <div class="hero-content">
-          <span class="label hero-label">Curriculum Design · Education · Research</span>
-          <h1>I design how<br>people <span class="hero-accent">learn</span>.</h1>
-          <p class="lead">
+          <span class="label hero-label hero-animate hero-animate-1">Curriculum Design · Education · Research</span>
+          <h1 class="hero-animate hero-animate-2">I design how<br>people <span class="hero-accent">learn</span>.</h1>
+          <p class="lead hero-animate hero-animate-3">
             Curriculum designer, educator, and researcher building frameworks that center
             metacognition — teaching students not just <em>what</em> to think,
             but <em>how</em> to think.
           </p>
-          <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: center;">
+          <div class="hero-animate hero-animate-4" style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: center;">
             <a href="research.html" class="btn btn--primary">Explore My Research</a>
             <a href="currere.html" class="btn btn--outline">About Me</a>
             <a href="materials.html" class="btn btn--ghost" style="font-size: var(--text-sm);">View Resumes</a>
@@ -158,7 +159,7 @@
         <h2 class="mt-4">What I Bring</h2>
 
         <div class="card-grid card-grid--3 mt-8">
-          <div class="card reveal">
+          <div class="card reveal" data-delay="0">
             <span class="label">Research</span>
             <h3>Axiomatica</h3>
             <div class="divider"></div>
@@ -170,7 +171,7 @@
             <a href="research.html" class="btn btn--ghost">Read more</a>
           </div>
 
-          <div class="card reveal">
+          <div class="card reveal" data-delay="150">
             <span class="label">Practice</span>
             <h3>Curriculum & Teaching</h3>
             <div class="divider"></div>
@@ -182,7 +183,7 @@
             <a href="projects.html" class="btn btn--ghost">See projects</a>
           </div>
 
-          <div class="card reveal">
+          <div class="card reveal" data-delay="300">
             <span class="label">Industry</span>
             <h3>Market Research & Data</h3>
             <div class="divider"></div>

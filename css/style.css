@@ -172,10 +172,12 @@ p {
 
 blockquote {
   border-left: 3px solid var(--color-accent);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-6) var(--space-8);
   margin: var(--space-8) 0;
   background: var(--color-accent-subtle);
-  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
+  position: relative;
+  overflow: hidden;
 }
 
 blockquote p {
@@ -310,16 +312,27 @@ main {
   border-radius: var(--border-radius);
   transition: all var(--transition-fast);
   text-decoration: none;
+  position: relative;
 }
 
-.site-nav a:hover,
-.site-nav a.active {
+.site-nav a:hover {
   color: var(--color-ink);
   background: var(--color-surface);
 }
 
 .site-nav a.active {
   color: var(--color-accent);
+}
+
+.site-nav a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: var(--space-3);
+  right: var(--space-3);
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
 }
 
 /* Mobile nav toggle */
@@ -620,8 +633,8 @@ main {
 
 .card:hover {
   border-color: var(--color-border);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
 }
 
 .card-grid {
@@ -1608,4 +1621,82 @@ main {
 
 .case-study-panel .container--prose {
   margin: 0 auto;
+}
+
+
+/* ============================================================
+   ANIMATIONS & ENHANCEMENTS
+   ============================================================ */
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--color-accent);
+  transition: width 80ms linear;
+  z-index: 101;
+  pointer-events: none;
+}
+
+/* Header shadow on scroll */
+.site-header.scrolled {
+  box-shadow: 0 2px 20px rgba(15, 20, 25, 0.08);
+}
+
+/* Hero entrance — staggered fade-up */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: heroFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-animate-1 { animation-delay: 0.05s; }
+.hero-animate-2 { animation-delay: 0.2s;  }
+.hero-animate-3 { animation-delay: 0.35s; }
+.hero-animate-4 { animation-delay: 0.5s;  }
+
+/* Hourglass float */
+@keyframes float {
+  0%, 100% { transform: translateY(0);     }
+  50%       { transform: translateY(-12px); }
+}
+
+.hero-image {
+  animation: float 5s ease-in-out 1s infinite;
+}
+
+/* Blockquote decorative quote mark */
+blockquote::before {
+  content: '\201C';
+  position: absolute;
+  top: -0.1em;
+  right: var(--space-6);
+  font-family: var(--font-heading);
+  font-size: 7rem;
+  line-height: 1;
+  color: var(--color-accent);
+  opacity: 0.15;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate {
+    animation: none;
+    opacity: 1;
+  }
+  .hero-image {
+    animation: none;
+  }
+  .reveal {
+    transition: none !important;
+  }
 }
