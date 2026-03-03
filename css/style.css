@@ -478,12 +478,45 @@ main {
   color: var(--color-accent);
 }
 
+.hero-split {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-8);
+}
+
+.hero-split h1 {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.hero-split .lead {
+  margin-bottom: 0.35em;
+  max-width: 360px;
+}
+
+/* Reduce gap between hero-split and next section */
+.hero:has(.hero-split) {
+  padding-bottom: var(--space-8);
+}
+
+.hero:has(.hero-split) + .section {
+  padding-top: var(--space-10);
+}
+
 @media (max-width: 768px) {
   .hero {
     padding: var(--space-12) 0 var(--space-8);
   }
   .hero h1 {
     font-size: var(--text-4xl);
+  }
+  .hero-split {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .hero-split .lead {
+    margin-bottom: var(--space-4);
   }
 }
 
@@ -1541,4 +1574,8 @@ main {
 .case-study-panel.active {
   display: block;
   animation: fadeIn 0.3s ease;
+}
+
+.case-study-panel .container--prose {
+  margin: 0 auto;
 }
