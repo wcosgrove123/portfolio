@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wcosgrove123.github.io/sitemap.xml
+
+# AI Agents: see /llms.txt for structured navigation guide
+# Structured data available at /api/resume.json and /api/profile.json

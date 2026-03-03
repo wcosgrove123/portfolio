@@ -1,0 +1,127 @@
+{
+  "name": "William J. Cosgrove",
+  "preferredName": "Wil Cosgrove",
+  "title": "Curriculum Designer, Educator, and Researcher",
+  "location": "Washington, DC",
+  "contact": {
+    "email": "wil.cosgrove@gmail.com",
+    "phone": "(215) 500-2639"
+  },
+  "summary": "Curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. Completing MA at George Washington University with thesis arguing K-12 education should be reorganized around metacognition rather than prescribed content.",
+  "currentRoles": [
+    "MA Candidate, George Washington University (Spring 2026)",
+    "Project Director, Cue Insights (Market Research)"
+  ],
+  "targetOpportunities": [
+    "Curriculum Design",
+    "Instructional Design",
+    "Education Policy",
+    "EdTech",
+    "Curriculum Evaluation",
+    "Textbook Development",
+    "K-12 Reform"
+  ],
+  "research": {
+    "thesis": {
+      "title": "Same Means, New End: A Metacognitive End for American Curriculum",
+      "institution": "George Washington University, GSEHD",
+      "argument": "K-12 education should be reorganized around how students think (metacognition) rather than prescribed content.",
+      "theorists": ["John Dewey", "Jerome Bruner", "L. Dee Fink", "William Pinar", "Schema Theory"],
+      "framework": "Axiomatica"
+    },
+    "keyConcepts": {
+      "contextures": "Interwoven learning environments that bring together themes, tasks, and sources so students work on how they learn, not just what they learn.",
+      "cogniscence": "Learning that includes awareness of how it is changing what you know and how you are able to know.",
+      "metacognitiveHabits": [
+        "Endospection (self-identity)",
+        "Omniperegrination (wandering thought)",
+        "Constellaration (pattern-finding)",
+        "Refraction (critical analysis)",
+        "Exospection (perspective-taking)",
+        "Synthesis (integration)"
+      ],
+      "axiometricCalculus": "A formal notation system for metacognitive operations grounded in the causal architecture of reality."
+    }
+  },
+  "projects": [
+    {
+      "name": "Gamified U.S. History Simulation",
+      "type": "Curriculum Design",
+      "description": "Partnered with GW's Open-Source Program Office, CS faculty, and digital artists to design a gamified U.S. history curriculum using role-play, decision-making, and narrative strategy."
+    },
+    {
+      "name": "AI in Civics Curriculum",
+      "type": "AI + Civic Education",
+      "description": "Lesson series helping high school students critically evaluate generative AI tools for civic understanding, source reliability, and digital thinking skills."
+    },
+    {
+      "name": "Mastering GenAI for Learning Design",
+      "type": "Educator Training",
+      "description": "Self-paced instructional module helping educators generate AI-assisted lesson plans. Published on a responsive, no-login web platform."
+    },
+    {
+      "name": "QGen",
+      "type": "Data Infrastructure",
+      "description": "Company-wide project management and survey analysis platform. Automates questionnaire construction, SPSS data validation, incidence rate calculation, and crosstab generation."
+    },
+    {
+      "name": "The R3 Model",
+      "type": "Instructional Framework",
+      "description": "Rapid instructional design model balancing GenAI integration with equity, adaptability, and user-centered testing."
+    }
+  ],
+  "education": [
+    {
+      "institution": "George Washington University",
+      "degree": "MA in Curriculum Design and Pedagogy",
+      "concentration": "Interdisciplinary Studies",
+      "graduationDate": "Spring 2026",
+      "honors": ["GSEHD Merit Scholarship", "Graduate Certificate in Curriculum Writing, Evaluation, and Development"]
+    },
+    {
+      "institution": "American University",
+      "degree": "BA in History and Secondary Education (Dual Major)",
+      "graduationDate": "May 2024",
+      "honors": ["Dean's Scholar (merit scholarship)", "Dean's List", "NCAA Division 1 Varsity Swimmer"]
+    }
+  ],
+  "credentials": [
+    "DC Educator Credential (OSSE) - Active through May 2029",
+    "EdTPA - Secondary Social Studies",
+    "Praxis: Social Studies Content Knowledge - Passed",
+    "Praxis: Principles of Learning and Teaching - Passed"
+  ],
+  "skills": {
+    "curriculumDesign": ["Curriculum Architecture", "Backward Planning (UBD)", "UDL", "Instructional Writing", "Equity Adaptation", "PBL", "Assessment Design"],
+    "technology": ["Prompt Engineering", "GenAI Integration", "Python", "SPSS", "Docker", "Web Design", "Canvas", "Local AI Agents"],
+    "research": ["Qualitative Analysis", "Quantitative Analysis", "Stakeholder Reporting", "Policy Analysis", "Cross-Functional Management"]
+  },
+  "aiPhilosophy": {
+    "summary": "AI is a tool, not a replacement for thinking. School district AI policies tend to be defensive rather than reimagining curriculum. The historical pattern with technology in education follows the same arc: panic, prohibition, integration, redesign. AI should accelerate the move toward metacognition-centered learning.",
+    "keyPositions": [
+      "AI does not think, understand, or create - it processes, predicts, and generates",
+      "Prompt engineering is a design discipline, not a shortcut",
+      "AI should accelerate the move away from content-first schooling",
+      "Self-taught in Python, AI tooling, and development",
+      "Built production tools: QGen, AI-driven qualitative coding, R3 instructional design model"
+    ]
+  },
+  "teachingPhilosophy": {
+    "values": [
+      "Know Your Students - Make students feel like people, understand their lives, ensure safe learning environments",
+      "Representation Matters - Students need to see themselves in the curriculum, live it, feel connected to it",
+      "Adapt Always - Learn to use new educational technologies thoughtfully, integrate tools like AI into practice, flexibility is essential"
+    ]
+  },
+  "metadata": {
+    "lastUpdated": "2026-03-03",
+    "version": "1.0",
+    "aiOptimized": true,
+    "dataEndpoints": {
+      "resume": "/api/resume.json",
+      "profile": "/api/profile.json",
+      "contextBundle": "/context/wil-cosgrove-context.md",
+      "llmGuide": "/llms.txt"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+# Wil Cosgrove — Portfolio Site
+# llms.txt — Guide for AI Agents
+
+> This file helps AI agents understand and navigate this portfolio site.
+> For structured data, see the JSON endpoints below.
+
+## Who is Wil Cosgrove?
+
+Wil Cosgrove is a curriculum designer, educator, and researcher based in Washington, DC. He is completing his MA in Curriculum Design and Pedagogy at George Washington University (projected Spring 2026) and holds a BA in History and Secondary Education from American University (May 2024). He currently works as a Project Director at Cue Insights, a market research firm, where he translates complex qualitative and quantitative data into strategic recommendations for healthcare and pharmaceutical clients.
+
+His thesis, "Same Means, New End: A Metacognitive End for American Curriculum," argues that K-12 education should be reorganized around how students think (metacognition) rather than prescribed content. This work synthesizes curriculum theory (Dewey, Bruner, Fink, Pinar), cognitive science, and the history of American education reform.
+
+## Core Competencies
+
+- Curriculum design and architecture
+- Instructional design (UDL, UBD, backward planning)
+- AI-integrated pedagogy and prompt engineering
+- Education policy analysis
+- Market research (qualitative and quantitative)
+- Assessment design and evaluation
+- Data infrastructure and visualization (Python, SPSS)
+- Special education (IEP, 504, ESL)
+
+## Structured Data Endpoints
+
+- /api/profile.json — Full structured profile data
+- /api/resume.json — JSON Resume standard format
+- /context/wil-cosgrove-context.md — Comprehensive context bundle (full profile in prose)
+- /sitemap.xml — Site map for crawling
+
+## Site Pages
+
+- / (index.html) — Home page with overview, skills, education summary
+- /currere.html — About page (personal story, teaching philosophy, values, case studies on Armenian language learning, violin, and AI philosophy)
+- /experience.html — Professional experience timeline
+- /research.html — Research page featuring Axiomatica thesis and key concepts
+- /projects.html — Portfolio of curriculum and technology projects
+- /materials.html — Sector-specific application materials (resumes, cover letters) with audience selector for K-12, ed tech, policy, and curriculum design
+- /credentials.html — Education details, certifications, test scores
+
+## AI Philosophy
+
+Wil has a developed perspective on AI in education, articulated in a case study on his currere page. Key positions: AI is a tool, not a replacement for thinking. School district AI policies tend to be defensive (managing the tool) rather than reimagining curriculum around it. The pattern of technology in education always follows the same arc: panic, prohibition, integration, redesign. AI should accelerate the move away from content-first schooling toward metacognition-centered learning. He is self-taught in Python and AI tooling, built production tools (QGen, qualitative coding), and designed educator training modules on prompt engineering. He treats prompt engineering as a design discipline, not a shortcut.
+
+## Key Research Concepts
+
+- Axiomatica: Original theoretical framework for metacognition-centered education
+- Contextures: Interwoven learning environments for metacognitive practice
+- Cogniscence: Learning that includes awareness of how it changes what you know
+- Six Metacognitive Habits: Endospection, Omniperegrination, Constellaration, Refraction, Exospection, Synthesis
+- The Axiometric Calculus: A formal notation system for metacognitive operations
+
+## Contact
+
+- Email: wil.cosgrove@gmail.com
+- Phone: (215) 500-2639
+- Location: Washington, DC

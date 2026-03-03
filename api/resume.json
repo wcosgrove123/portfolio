@@ -1,0 +1,191 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "William J. Cosgrove",
+    "label": "Curriculum Designer, Educator, and Researcher",
+    "email": "wil.cosgrove@gmail.com",
+    "phone": "(215) 500-2639",
+    "summary": "Curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. Experienced in designing onboarding and training content, translating complex research into actionable learning experiences, and managing cross-functional projects in fast-paced environments. Skilled in prompt engineering, data-driven insight delivery, and building scalable educational frameworks from the ground up.",
+    "location": {
+      "city": "Washington",
+      "region": "DC",
+      "countryCode": "US"
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "url": "https://github.com/wcosgrove123"
+      }
+    ]
+  },
+  "education": [
+    {
+      "institution": "George Washington University",
+      "area": "Curriculum Design and Pedagogy, Concentration in Interdisciplinary Studies",
+      "studyType": "Master of Arts",
+      "startDate": "2024-08",
+      "endDate": "2026-05",
+      "score": "GSEHD Merit Scholarship",
+      "courses": [
+        "CPED 6608 Development and Diversity",
+        "EDUC 6402 Trends and Issues in Emerging Technologies",
+        "EDUC 6427 Advanced Instructional Design",
+        "HIST 6303 Revolutionary America"
+      ]
+    },
+    {
+      "institution": "American University",
+      "area": "History and Secondary Education (Dual Major)",
+      "studyType": "Bachelor of Arts",
+      "startDate": "2020-08",
+      "endDate": "2024-05",
+      "score": "Dean's Scholar (merit scholarship), Dean's List"
+    }
+  ],
+  "work": [
+    {
+      "name": "Cue Insights",
+      "position": "Project Director",
+      "startDate": "2024-05",
+      "summary": "Market research firm specializing in healthcare and pharmaceutical research.",
+      "highlights": [
+        "Synthesize complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients",
+        "Designed and built QGen, a company-wide project management and survey analysis platform",
+        "Developed AI-driven qualitative coding tools replacing manual coding processes",
+        "Present research findings directly to senior client stakeholders",
+        "Evaluate survey instruments for measurement validity and reliability"
+      ]
+    },
+    {
+      "name": "George Washington University",
+      "position": "Curriculum Designer and Researcher (Graduate)",
+      "startDate": "2024-08",
+      "highlights": [
+        "Designing original metacognitive curriculum framework (Axiomatica) synthesizing Dewey, Bruner, Fink, Pinar, and schema theory",
+        "Partnered with GW Open-Source Program Office to design gamified U.S. history simulation",
+        "Created self-paced instructional module for AI-assisted lesson planning",
+        "Developed AI in Civics curriculum for secondary students"
+      ]
+    },
+    {
+      "name": "Bethesda-Chevy Chase High School (MCPS)",
+      "position": "Student Teacher, AP US History and AP Government",
+      "startDate": "2024-01",
+      "endDate": "2024-05",
+      "highlights": [
+        "Designed and independently led instruction for five AP sections",
+        "Constructed original AP Government curriculum around democratic institutions and federalism",
+        "Adapted curriculum for IEP, 504, and ESL learners",
+        "Navigated multi-stakeholder dynamics in IEP and 504 processes"
+      ]
+    },
+    {
+      "name": "Swim Safe",
+      "position": "Co-Founder, Co-CEO, and Lead Instructor",
+      "startDate": "2017-05",
+      "endDate": "2024-08",
+      "highlights": [
+        "Co-founded and scaled community swim safety school serving 500+ students",
+        "Designed individualized adaptive curriculum for diverse learners",
+        "Managed all operations, hiring, and financial oversight across multiple locations"
+      ]
+    }
+  ],
+  "certificates": [
+    {
+      "name": "DC Educator Credential",
+      "issuer": "OSSE (Office of the State Superintendent of Education)",
+      "date": "2024"
+    },
+    {
+      "name": "Graduate Certificate in Curriculum Writing, Evaluation, and Development",
+      "issuer": "George Washington University",
+      "date": "2026"
+    },
+    {
+      "name": "EdTPA (Secondary Social Studies)",
+      "issuer": "edTPA / Pearson",
+      "date": "2024"
+    },
+    {
+      "name": "Praxis: Social Studies Content Knowledge",
+      "issuer": "ETS",
+      "date": "2024"
+    },
+    {
+      "name": "Praxis: Principles of Learning and Teaching",
+      "issuer": "ETS",
+      "date": "2024"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Learning and Curriculum Design",
+      "keywords": [
+        "Curriculum Architecture",
+        "Backward Planning (UBD)",
+        "Universal Design for Learning (UDL)",
+        "Instructional Writing",
+        "Equity Adaptation",
+        "Project-Based Learning",
+        "Assessment Design",
+        "Onboarding and Training Program Design"
+      ]
+    },
+    {
+      "name": "Technology and AI",
+      "keywords": [
+        "Prompt Engineering",
+        "GenAI Integration for Learning Design",
+        "Python",
+        "SPSS",
+        "Docker",
+        "Web Design",
+        "Canvas",
+        "Local AI Agents (n8n, LLMs, vector memory retrieval)",
+        "Container Orchestration"
+      ]
+    },
+    {
+      "name": "Research and Communication",
+      "keywords": [
+        "Qualitative Data Analysis",
+        "Quantitative Data Analysis",
+        "Stakeholder Reporting",
+        "Cross-Functional Team Management",
+        "Policy Analysis",
+        "Strategic Recommendations"
+      ]
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Hope Multiplied",
+      "position": "Volunteer",
+      "startDate": "2023-03",
+      "endDate": "2025-06",
+      "summary": "Weekly food distribution across underserved neighborhoods and schools in the DMV"
+    },
+    {
+      "organization": "American University Swim and Dive",
+      "position": "NCAA Division 1 Varsity Swimmer",
+      "startDate": "2020-08",
+      "endDate": "2024-03",
+      "summary": "20+ hours/week training. Special Olympics coaching, youth swim instruction, and service projects."
+    }
+  ],
+  "interests": [
+    {
+      "name": "Research Interests",
+      "keywords": [
+        "Structural K-12 Reform",
+        "Metacognition",
+        "Curriculum Architecture",
+        "Education Policy",
+        "AI in Education",
+        "Assessment Policy",
+        "School Funding Effectiveness"
+      ]
+    }
+  ]
+}
