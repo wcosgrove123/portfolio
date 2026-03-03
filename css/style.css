@@ -1668,7 +1668,7 @@ main {
   50%       { transform: translateY(-12px); }
 }
 
-.hero-image {
+.hero-image img {
   animation: float 5s ease-in-out 1s infinite;
 }
 
@@ -1693,7 +1693,7 @@ blockquote::before {
     animation: none;
     opacity: 1;
   }
-  .hero-image {
+  .hero-image img {
     animation: none;
   }
   .reveal {
