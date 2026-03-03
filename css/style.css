@@ -478,6 +478,30 @@ main {
   color: var(--color-accent);
 }
 
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.hero-content {
+  min-width: 0;
+}
+
+.hero-image {
+  flex-shrink: 0;
+}
+
+.hero-image img {
+  width: 340px;
+  height: 340px;
+  object-fit: contain;
+  display: block;
+  opacity: 0.92;
+  mix-blend-mode: multiply;
+}
+
 .hero-split {
   display: flex;
   align-items: flex-end;
@@ -509,6 +533,12 @@ main {
   }
   .hero h1 {
     font-size: var(--text-4xl);
+  }
+  .hero-container {
+    grid-template-columns: 1fr;
+  }
+  .hero-image {
+    display: none;
   }
   .hero-split {
     flex-direction: column;
