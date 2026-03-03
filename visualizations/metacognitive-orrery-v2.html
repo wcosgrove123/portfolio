@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metacognitive Orrery v2</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #1a2332; }
+canvas { width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls }   from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer }  from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }      from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+// ================================================================
+// CONSTANTS
+// ================================================================
+const NUCLEUS_G        = 1.4;    // nucleus gravitational strength
+const PARTICLE_G       = 0.005;  // particle–particle gravity
+const OUTER_BOUND      = 3.7;    // max distance from center
+const INNER_BOUND      = 1.15;   // nucleus surface
+const FIZZLE_TIME      = 12.0;   // sec before idle exploring particle fades
+const MERGE_DIST       = 0.28;   // distance for particle–particle merge
+const RESEARCH_DIST    = 0.5;    // collision range of research nodes
+const LIGHTNING_DIST   = 0.75;   // bolt proximity that triggers a split
+const MAX_PARTICLES    = 50;     // pool size
+const SPAWN_INTERVAL   = 1.0;    // sec between spawns when under cap
+const RESEARCH_DURATION = 7.0;   // sec in RESEARCHING before returning
+const SPLIT_DURATION   = 5.5;    // sec as orbiting pair before separating
+const ZIGZAG_INTERVAL  = 0.55;   // sec between direction changes while researching
+
+// ================================================================
+// UTILITIES
+// ================================================================
+function noise2D() {
+  const perm = Array.from({length:256},(_,i)=>i);
+  for (let i=255;i>0;i--){const j=Math.floor(Math.random()*(i+1));[perm[i],perm[j]]=[perm[j],perm[i]];}
+  const p=[...perm,...perm];
+  const fade=t=>t*t*t*(t*(t*6-15)+10);
+  const lerp=(a,b,t)=>a+t*(b-a);
+  const grad=(h,x,y)=>{const u=h<2?x:y,v=h<2?y:x;return((h&1)?-u:u)+((h&2)?-v:v);};
+  return (x,y)=>{
+    const X=Math.floor(x)&255,Y=Math.floor(y)&255;
+    x-=Math.floor(x);y-=Math.floor(y);
+    const u=fade(x),v=fade(y),A=p[X]+Y,B=p[X+1]+Y;
+    return lerp(lerp(grad(p[A],x,y),grad(p[B],x-1,y),u),
+                lerp(grad(p[A+1],x,y-1),grad(p[B+1],x-1,y-1),u),v);
+  };
+}
+const n2d = noise2D();
+
+function randomOnSphere(r) {
+  const th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+  return new THREE.Vector3(r*Math.sin(ph)*Math.cos(th),r*Math.sin(ph)*Math.sin(th),r*Math.cos(ph));
+}
+
+function tangentialVelocity(pos, speed) {
+  const radial = pos.clone().normalize();
+  const up = Math.abs(radial.y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0);
+  return new THREE.Vector3().crossVectors(radial, up).normalize().multiplyScalar(speed);
+}
+
+// ================================================================
+// SCENE / RENDERER / BLOOM
+// ================================================================
+const canvas    = document.getElementById('c');
+const container = canvas.parentElement;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#1a2332');
+scene.fog = new THREE.Fog('#1a2332', 10, 22);
+
+const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 100);
+camera.position.set(8, 5, 8);
+camera.lookAt(0,0,0);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.autoRotate    = true;
+controls.autoRotateSpeed = 0.35;
+controls.minDistance   = 5;
+controls.maxDistance   = 16;
+controls.enablePan     = false;
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference:'high-performance' });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(
+  new THREE.Vector2(container.clientWidth, container.clientHeight),
+  0.4,   // strength
+  0.6,   // radius
+  0.42   // threshold
+));
+
+// ================================================================
+// LIGHTING
+// ================================================================
+scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+sun.position.set(5,8,5);
+scene.add(sun);
+
+const nucleusLight = new THREE.PointLight(0xFFE6A0, 3.5, 9);
+scene.add(nucleusLight);
+
+// Axis accent lights (color the gyroscope rings)
+[[0x0EA5E9,4,0,0],[0x0EA5E9,-4,0,0],[0xEC4899,0,4,0],
+ [0xEC4899,0,-4,0],[0xA855F7,0,0,4],[0xA855F7,0,0,-4]]
+.forEach(([c,x,y,z])=>{
+  const l=new THREE.PointLight(c,0.75,6); l.position.set(x,y,z); scene.add(l);
+});
+
+// ================================================================
+// ELEMENT 1 — SELF-IDENTITY: BREATHING NUCLEUS
+// ================================================================
+const nucleusMat = new THREE.ShaderMaterial({
+  uniforms: {
+    time:    { value: 0 },
+    breathe: { value: 1 },
+    color:   { value: new THREE.Color(0xFFE6A0) },
+  },
+  vertexShader:`
+    varying vec3 vN,vP;
+    void main(){vN=normalize(normalMatrix*normal);vP=position;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+  fragmentShader:`
+    uniform float time,breathe; uniform vec3 color;
+    varying vec3 vN,vP;
+    float hn(vec3 p){return fract(sin(dot(p,vec3(12.9898,78.233,45.543)))*43758.5453);}
+    void main(){
+      vec3 vd=normalize(cameraPosition-vP);
+      float fr=pow(1.-dot(vN,vd),3.);
+      float nv=hn(vP*3.+time*.4)*.2;
+      float lum=clamp((0.6+nv+fr*.25)*breathe,0.,0.95);
+      gl_FragColor=vec4(color*lum,1.);}`,
+  side: THREE.DoubleSide,
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.0,64,64), nucleusMat));
+
+// ================================================================
+// STRUCTURAL — GYROSCOPE RINGS (compass framework, not a habit)
+// ================================================================
+const ringGroup = new THREE.Group();
+[0x0EA5E9, 0xEC4899, 0xA855F7].forEach((c,i)=>{
+  const m=new THREE.Mesh(
+    new THREE.TorusGeometry(4.0,0.035,16,128),
+    new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:0.35,
+      metalness:0.85,roughness:0.15,transparent:true,opacity:0.6})
+  );
+  if(i===0)m.rotation.y=Math.PI/2;
+  if(i===1)m.rotation.x=Math.PI/2;
+  ringGroup.add(m);
+});
+scene.add(ringGroup);
+
+// ================================================================
+// ELEMENT 3 — RESEARCH: CRYSTALLINE NODES
+// Particles that collide switch to structured zigzag motion
+// ================================================================
+const researchNodes = [
+  new THREE.Vector3( 2.2,  0,   0 ),
+  new THREE.Vector3(-2.2,  0,   0 ),
+  new THREE.Vector3( 0,    2.2, 0 ),
+  new THREE.Vector3( 0,   -2.2, 0 ),
+  new THREE.Vector3( 0,    0,   2.2),
+  new THREE.Vector3( 0,    0,  -2.2),
+].map(pos => {
+  const mat = new THREE.MeshStandardMaterial({
+    color:0xc9973a, emissive:0xc9973a, emissiveIntensity:0.6,
+    metalness:0.4, roughness:0.3,
+  });
+  const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.27, 0), mat);
+  mesh.position.copy(pos);
+  scene.add(mesh);
+  return { mesh, position: pos.clone(), pulsing: false, pulseTimer: 0 };
+});
+
+// ================================================================
+// ELEMENT 5 — APPLICATION: ABSORPTION RING
+// RESEARCHING particles that reach outer orbit pass through and
+// re-emerge as fresh EXPLORING particles — knowledge applied
+// ================================================================
+const appRingMat = new THREE.MeshStandardMaterial({
+  color:0xFFE6A0, emissive:0xFFE6A0, emissiveIntensity:0.2,
+  transparent:true, opacity:0.25, metalness:0.1, roughness:0.7,
+});
+const appRing = new THREE.Mesh(new THREE.TorusGeometry(3.15, 0.055, 16, 80), appRingMat);
+appRing.rotation.x = Math.PI / 3;
+scene.add(appRing);
+
+// ================================================================
+// ELEMENT 2 — EXPLORATION/CURIOSITY: PARTICLE POOL + STATE MACHINE
+//
+// States:
+//   EXPLORING   — orbital N-body motion, random perturbation
+//   RESEARCHING — structured zigzag, triggered by research node collision
+//   SPLIT_A     — primary of an orbiting pair (drives orbit center)
+//   SPLIT_B     — secondary of an orbiting pair (position set by SPLIT_A)
+// ================================================================
+const pool = [];
+
+function makeParticle() {
+  const mat = new THREE.MeshStandardMaterial({
+    color:0xfcd34d, emissive:0xfcd34d, emissiveIntensity:0.8,
+    metalness:0.1, roughness:0.5, transparent:true, opacity:0,
+  });
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.09,8,8), mat);
+  mesh.visible = false;
+  scene.add(mesh);
+  return {
+    mesh,
+    active:         false,
+    position:       new THREE.Vector3(),
+    velocity:       new THREE.Vector3(),
+    state:          'EXPLORING',
+    fizzleTimer:    0,
+    stateTimer:     0,
+    zigzagDir:      new THREE.Vector3(1,0,0),
+    zigzagTimer:    0,
+    partnerIdx:     -1,
+    orbitAngle:     0,
+    orbitSpeed:     0,
+    orbitCenter:    new THREE.Vector3(),
+    orbitCenterVel: new THREE.Vector3(),
+    orbitAxis:      new THREE.Vector3(0,1,0),
+  };
+}
+for (let i=0; i<MAX_PARTICLES; i++) pool.push(makeParticle());
+
+const getActive   = () => pool.filter(p=>p.active);
+const getInactive = () => pool.find(p=>!p.active) ?? null;
+
+function activateParticle(p, pos, vel) {
+  p.active       = true;
+  p.state        = 'EXPLORING';
+  p.fizzleTimer  = 0;
+  p.stateTimer   = 0;
+  p.partnerIdx   = -1;
+  p.position.copy(pos);
+  p.velocity.copy(vel);
+  p.mesh.material.color.setHex(0xfcd34d);
+  p.mesh.material.emissive.setHex(0xfcd34d);
+  p.mesh.material.emissiveIntensity = 0.8;
+  p.mesh.material.opacity = 0;
+  p.mesh.scale.setScalar(1.0);
+  p.mesh.visible = true;
+}
+
+function deactivate(p) {
+  p.active       = false;
+  p.partnerIdx   = -1;
+  p.mesh.visible = false;
+}
+
+// Pre-populate so the scene is alive on load
+;(function preSpawn() {
+  for (let i=0; i<12; i++) {
+    const p = getInactive();
+    if (!p) break;
+    const r = 1.3 + Math.random()*1.8;
+    const pos = randomOnSphere(r);
+    const vel = tangentialVelocity(pos, 0.55 + Math.random()*0.6);
+    vel.addScaledVector(pos.clone().normalize(), (Math.random()-.5)*0.15);
+    activateParticle(p, pos, vel);
+    p.mesh.material.opacity = 0.3 + Math.random()*0.7;
+    p.fizzleTimer = Math.random()*5; // stagger so they don't all fizzle at once
+  }
+})();
+
+let spawnTimer = 0;
+
+function spawnFromNucleus() {
+  const p = getInactive();
+  if (!p) return;
+  const pos = randomOnSphere(1.2 + Math.random()*0.3);
+  const vel = tangentialVelocity(pos, 0.65 + Math.random()*0.5);
+  vel.addScaledVector(pos.clone().normalize(), 0.1);
+  activateParticle(p, pos, vel);
+}
+
+// ================================================================
+// ELEMENT 4 — CRITICAL THINKING / REFLECTION: LIGHTNING
+// A bolt that fires periodically. Any EXPLORING particle within
+// LIGHTNING_DIST of the bolt path splits into an orbiting pair.
+// ================================================================
+const lightningBolts = [];
+
+function buildBoltPoints(start, end, jag) {
+  const pts = [start.clone()];
+  for (let i=1; i<18; i++) {
+    const t  = i/18;
+    const pt = new THREE.Vector3().lerpVectors(start, end, t);
+    const j  = jag * Math.sin(t*Math.PI) * 0.9;
+    pt.add(new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5)
+      .normalize().multiplyScalar((Math.random()-.5)*j));
+    pts.push(pt);
+  }
+  pts.push(end.clone());
+  return pts;
+}
+
+function fireLightning(from, to, color) {
+  const pts = buildBoltPoints(from, to, 0.9);
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({
+    color, transparent:true, opacity:1.0, blending:THREE.AdditiveBlending,
+  });
+  const line = new THREE.Line(geo, mat);
+  scene.add(line);
+  lightningBolts.push({ line, pts, createdAt:Date.now(), lifetime:0.35+Math.random()*0.2, checked:false });
+  nucleusLight.intensity = 5.5;
+  setTimeout(()=>{ nucleusLight.intensity=3.5; }, 80);
+}
+
+function checkBoltSplits(pts) {
+  // For each EXPLORING particle, find closest point on polyline
+  for (const p of pool) {
+    if (!p.active || p.state !== 'EXPLORING') continue;
+    let closest = Infinity;
+    for (let i=0; i<pts.length-1; i++) {
+      const seg = new THREE.Vector3().subVectors(pts[i+1], pts[i]);
+      const toP = new THREE.Vector3().subVectors(p.position, pts[i]);
+      const t   = Math.max(0, Math.min(1, toP.dot(seg)/seg.lengthSq()));
+      const d   = pts[i].clone().addScaledVector(seg, t).distanceTo(p.position);
+      closest = Math.min(closest, d);
+    }
+    if (closest < LIGHTNING_DIST) splitParticle(p);
+  }
+}
+
+function splitParticle(p) {
+  if (p.state !== 'EXPLORING') return;
+  const q = getInactive();
+  if (!q) return;
+
+  const pIdx = pool.indexOf(p), qIdx = pool.indexOf(q);
+  const orbitAxis = randomOnSphere(1).normalize();
+  const orbitSpeed = 2.8 + Math.random();
+
+  // Activate partner
+  q.active         = true;
+  q.state          = 'SPLIT_B';
+  q.stateTimer     = 0;
+  q.partnerIdx     = pIdx;
+  q.orbitAngle     = Math.PI;
+  q.orbitSpeed     = orbitSpeed;
+  q.orbitAxis.copy(orbitAxis);
+  q.orbitCenter.copy(p.position);
+  q.orbitCenterVel.copy(p.velocity).multiplyScalar(0.2);
+  q.position.copy(p.position);
+  q.velocity.set(0,0,0);
+  q.mesh.visible   = true;
+  q.mesh.material.color.setHex(0xFAB005);
+  q.mesh.material.emissive.setHex(0xFAB005);
+  q.mesh.material.emissiveIntensity = 1.1;
+  q.mesh.material.opacity = 1.0;
+  q.mesh.scale.setScalar(0.72);
+  q.fizzleTimer    = 0;
+
+  // Convert p to SPLIT_A
+  p.state          = 'SPLIT_A';
+  p.stateTimer     = 0;
+  p.partnerIdx     = qIdx;
+  p.orbitAngle     = 0;
+  p.orbitSpeed     = orbitSpeed;
+  p.orbitAxis.copy(orbitAxis);
+  p.orbitCenter.copy(p.position);
+  p.orbitCenterVel.copy(p.velocity).multiplyScalar(0.2);
+  p.mesh.material.color.setHex(0xFAB005);
+  p.mesh.material.emissive.setHex(0xFAB005);
+  p.mesh.material.emissiveIntensity = 1.1;
+  p.mesh.scale.setScalar(0.72);
+}
+
+// ================================================================
+// ELEMENT 6 — SYNTHESIS: AUTONOMOUS SNAKE
+// Represents the act of weaving disparate elements into new whole.
+// Not predestined — emergent from rules alone.
+// ================================================================
+const SNAKE_SEGS    = 32;
+const SNAKE_SPEED   = 1.3;
+const SNAKE_HIST    = (SNAKE_SEGS+4)*7;
+const snakeMeshes   = [];
+
+for (let i=0; i<=SNAKE_SEGS; i++) {
+  const t   = i/SNAKE_SEGS;
+  const r   = Math.max(0.09 - t*0.062, 0.02);
+  const mat = new THREE.MeshStandardMaterial({
+    color:0xFAB005, emissive:0xFAB005,
+    emissiveIntensity: i===0 ? 1.4 : 0.75 - t*0.4,
+    metalness:0.2, roughness:0.5,
+    transparent: t>0.6, opacity: t>0.6 ? 1-((t-.6)/.4)*.8 : 1,
+  });
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r,8,8), mat);
+  scene.add(m);
+  snakeMeshes.push(m);
+}
+
+const snakeHead    = new THREE.Vector3(2.2, 0.9, 0.4);
+const snakeDir     = new THREE.Vector3(-0.3, 0.6, 0.7).normalize();
+const snakeTarget  = snakeDir.clone();
+const snakeHistory = [];
+let snakeWT = 0, snakeWI = 2.0 + Math.random()*2.0;
+
+function updateSnake(dt) {
+  snakeWT += dt;
+  if (snakeWT > snakeWI) {
+    snakeWT = 0; snakeWI = 1.8 + Math.random()*2.4;
+    snakeTarget.copy(snakeDir)
+      .add(new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5).multiplyScalar(1.3))
+      .normalize();
+  }
+  snakeDir.lerp(snakeTarget, dt*2.2).normalize();
+  const d = snakeHead.length();
+  if (d > 3.45) {
+    snakeDir.lerp(snakeHead.clone().normalize().negate(), dt*9*Math.min((d-3.45)/.7,1)).normalize();
+    snakeTarget.copy(snakeDir);
+  }
+  if (d < 1.65) {
+    snakeDir.lerp(snakeHead.clone().normalize(), dt*9).normalize();
+    snakeTarget.copy(snakeDir);
+  }
+  snakeHead.addScaledVector(snakeDir, SNAKE_SPEED*dt);
+  snakeHistory.unshift(snakeHead.clone());
+  if (snakeHistory.length > SNAKE_HIST) snakeHistory.pop();
+  snakeMeshes[0].position.copy(snakeHead);
+  for (let i=1; i<=SNAKE_SEGS; i++)
+    snakeMeshes[i].position.copy(snakeHistory[Math.min(i*7, snakeHistory.length-1)]);
+}
+
+// ================================================================
+// ANIMATION LOOP
+// ================================================================
+const clock = new THREE.Clock();
+let critTimer=0, critInterval=3.5+Math.random()*2;
+let reflTimer=0, reflInterval=5.0+Math.random()*2.5;
+
+function animate() {
+  const dt = clock.getDelta();
+  const t  = clock.getElapsedTime();
+
+  // ---- Nucleus breathe ----
+  const breathe = 0.85 + n2d(t*0.4, 0)*0.35;
+  nucleusMat.uniforms.time.value    = t;
+  nucleusMat.uniforms.breathe.value = breathe;
+  nucleusLight.intensity = Math.max(nucleusLight.intensity - dt*2, 2.8 + breathe*0.6);
+
+  // ---- Research nodes: rotate + pulse ----
+  researchNodes.forEach(n => {
+    n.mesh.rotation.x += dt*0.4;
+    n.mesh.rotation.y += dt*0.3;
+    if (n.pulsing) {
+      n.pulseTimer += dt;
+      n.mesh.material.emissiveIntensity = 0.6 + Math.sin(n.pulseTimer*14)*0.45;
+      if (n.pulseTimer > 0.55) { n.pulsing=false; n.mesh.material.emissiveIntensity=0.6; }
+    }
+  });
+
+  // ---- Application ring breathe ----
+  appRingMat.emissiveIntensity = 0.15 + Math.sin(t*0.7)*0.08;
+
+  // ---- Spawn particles ----
+  spawnTimer += dt;
+  if (spawnTimer >= SPAWN_INTERVAL && getActive().length < MAX_PARTICLES) {
+    spawnFromNucleus();
+    spawnTimer = 0;
+  }
+
+  // ================================================================
+  // PARTICLE PHYSICS + STATE MACHINE
+  // ================================================================
+  const active = getActive();
+
+  // -- N-body gravity --
+  // 1. Nucleus pulls everything except split pairs (they use orbit center)
+  for (const p of active) {
+    if (p.state === 'SPLIT_A' || p.state === 'SPLIT_B') continue;
+    const toNucleus = p.position.clone().negate();
+    const dist = toNucleus.length();
+    if (dist < 0.05) continue;
+    p.velocity.addScaledVector(toNucleus.normalize(), NUCLEUS_G * dt / (dist*dist));
+  }
+
+  // 2. Particle–particle gravity (only EXPLORING, only nearby)
+  for (let i=0; i<active.length; i++) {
+    if (active[i].state !== 'EXPLORING') continue;
+    for (let j=i+1; j<active.length; j++) {
+      if (active[j].state !== 'EXPLORING') continue;
+      const delta = new THREE.Vector3().subVectors(active[j].position, active[i].position);
+      const dist  = delta.length();
+      if (dist < 0.05 || dist > 2.5) continue;
+      const f = PARTICLE_G * dt / (dist*dist);
+      delta.normalize().multiplyScalar(f);
+      active[i].velocity.add(delta);
+      active[j].velocity.sub(delta);
+    }
+  }
+
+  // -- State machine --
+  for (let i = active.length-1; i >= 0; i--) {
+    const p = active[i];
+
+    // ---- EXPLORING ----
+    if (p.state === 'EXPLORING') {
+      // Fade in
+      if (p.mesh.material.opacity < 1)
+        p.mesh.material.opacity = Math.min(p.mesh.material.opacity + dt*1.5, 1);
+
+      // Small random perturbation (Brownian — prevents perfect orbits)
+      p.velocity.add(new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5)
+        .multiplyScalar(dt*0.07));
+
+      // Soft outer boundary
+      const dist = p.position.length();
+      if (dist > OUTER_BOUND)
+        p.velocity.addScaledVector(p.position.clone().normalize().negate(), dt*4);
+
+      p.position.addScaledVector(p.velocity, dt);
+      p.fizzleTimer += dt;
+
+      // Fizzle out
+      if (p.fizzleTimer > FIZZLE_TIME) {
+        p.mesh.material.opacity -= dt*1.8;
+        if (p.mesh.material.opacity <= 0) { deactivate(p); continue; }
+      }
+
+      // Research node collision
+      for (const node of researchNodes) {
+        if (p.position.distanceTo(node.position) < RESEARCH_DIST) {
+          p.state       = 'RESEARCHING';
+          p.stateTimer  = 0;
+          p.fizzleTimer = 0;
+          p.velocity.set(0,0,0);
+          // Zigzag direction: perpendicular to approach
+          const approach = new THREE.Vector3().subVectors(p.position, node.position).normalize();
+          p.zigzagDir.set(Math.random()-.5,Math.random()-.5,Math.random()-.5)
+            .projectOnPlane(approach).normalize();
+          p.zigzagTimer = 0;
+          p.mesh.material.color.setHex(0xe8b04b);
+          p.mesh.material.emissive.setHex(0xe8b04b);
+          p.mesh.material.emissiveIntensity = 1.2;
+          node.pulsing    = true;
+          node.pulseTimer = 0;
+          break;
+        }
+      }
+
+      // Particle–particle merge
+      for (let j=i-1; j>=0; j--) {
+        const pj = active[j];
+        if (!pj.active || pj.state !== 'EXPLORING') continue;
+        if (p.position.distanceTo(pj.position) < MERGE_DIST) {
+          // Keep pj, absorb p — brief brightness flash
+          pj.fizzleTimer = 0;
+          pj.mesh.material.emissiveIntensity = 1.8;
+          setTimeout(()=>{ if(pj.active) pj.mesh.material.emissiveIntensity=0.8; }, 250);
+          deactivate(p);
+          break;
+        }
+      }
+
+    // ---- RESEARCHING ----
+    } else if (p.state === 'RESEARCHING') {
+      p.stateTimer  += dt;
+      p.fizzleTimer += dt;
+      p.zigzagTimer += dt;
+
+      // Zigzag: sharp direction change on timer
+      if (p.zigzagTimer > ZIGZAG_INTERVAL) {
+        p.zigzagTimer = 0;
+        const perp = new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5)
+          .projectOnPlane(p.zigzagDir).normalize();
+        const angle = (Math.random()>0.5?1:-1) * (Math.PI/4 + Math.random()*Math.PI/5);
+        p.zigzagDir.applyAxisAngle(perp, angle).normalize();
+        // Gentle pull toward center keeps particles in frame
+        p.zigzagDir.lerp(p.position.clone().negate().normalize(), 0.12).normalize();
+      }
+
+      p.velocity.lerp(p.zigzagDir.clone().multiplyScalar(1.25), dt*5);
+      p.position.addScaledVector(p.velocity, dt);
+
+      if (p.position.length() > OUTER_BOUND-0.2) {
+        p.velocity.addScaledVector(p.position.clone().normalize().negate(), dt*6);
+        p.position.clampLength(0, OUTER_BOUND-0.2);
+        p.zigzagDir.lerp(p.position.clone().negate().normalize(), 0.4).normalize();
+      }
+
+      // Application ring absorption: outer orbit + enough research time = applied
+      if (p.position.length() > 2.9 && p.stateTimer > 2.5) {
+        deactivate(p);
+        spawnTimer = SPAWN_INTERVAL; // trigger immediate re-spawn
+        continue;
+      }
+
+      // Return to exploring after full duration
+      if (p.stateTimer > RESEARCH_DURATION) {
+        p.state = 'EXPLORING';
+        p.fizzleTimer = 0;
+        p.mesh.material.color.setHex(0xfcd34d);
+        p.mesh.material.emissive.setHex(0xfcd34d);
+        p.mesh.material.emissiveIntensity = 0.8;
+      }
+
+    // ---- SPLIT_A (primary orbit driver) ----
+    } else if (p.state === 'SPLIT_A') {
+      p.stateTimer += dt;
+      p.orbitAngle  += p.orbitSpeed * dt;
+
+      // Orbit center drifts with weak nucleus gravity
+      const toOrigin = p.orbitCenter.clone().negate();
+      const od = toOrigin.length();
+      if (od > 0.1)
+        p.orbitCenterVel.addScaledVector(toOrigin.normalize(), NUCLEUS_G*0.25*dt/(od*od));
+      p.orbitCenter.addScaledVector(p.orbitCenterVel, dt);
+      if (p.orbitCenter.length() > OUTER_BOUND-0.5) {
+        p.orbitCenterVel.addScaledVector(p.orbitCenter.clone().normalize().negate(), dt*3);
+        p.orbitCenter.clampLength(0, OUTER_BOUND-0.5);
+      }
+
+      // Compute orbit positions around center
+      const ax = p.orbitAxis;
+      const u  = Math.abs(ax.x) < 0.9 ? new THREE.Vector3(1,0,0) : new THREE.Vector3(0,1,0);
+      const bv = new THREE.Vector3().crossVectors(ax, u).normalize();
+      const cv = new THREE.Vector3().crossVectors(ax, bv);
+      const R  = 0.28;
+      const c1 = Math.cos(p.orbitAngle), s1 = Math.sin(p.orbitAngle);
+
+      p.position.copy(p.orbitCenter).addScaledVector(bv,c1*R).addScaledVector(cv,s1*R);
+      p.mesh.position.copy(p.position);
+
+      // Drive partner (SPLIT_B)
+      const q = pool[p.partnerIdx];
+      if (q && q.state === 'SPLIT_B') {
+        q.position.copy(p.orbitCenter).addScaledVector(bv,-c1*R).addScaledVector(cv,-s1*R);
+        q.mesh.position.copy(q.position);
+      }
+
+      // Separate after duration
+      if (p.stateTimer > SPLIT_DURATION) {
+        p.state = 'EXPLORING';
+        p.fizzleTimer = 0;
+        p.velocity.copy(bv).multiplyScalar(0.55);
+        p.mesh.material.color.setHex(0xfcd34d);
+        p.mesh.material.emissive.setHex(0xfcd34d);
+        p.mesh.material.emissiveIntensity = 0.8;
+        p.mesh.scale.setScalar(1.0);
+        if (q && q.state === 'SPLIT_B') {
+          q.state = 'EXPLORING';
+          q.fizzleTimer = 0;
+          q.velocity.copy(bv).multiplyScalar(-0.55);
+          q.mesh.material.color.setHex(0xfcd34d);
+          q.mesh.material.emissive.setHex(0xfcd34d);
+          q.mesh.material.emissiveIntensity = 0.8;
+          q.mesh.scale.setScalar(1.0);
+          q.partnerIdx = -1;
+        }
+        p.partnerIdx = -1;
+      }
+      continue; // mesh already synced above
+    }
+    // SPLIT_B: position driven by SPLIT_A each frame, mesh already synced there
+    // Sync mesh for EXPLORING and RESEARCHING
+    if (p.active && p.state !== 'SPLIT_A' && p.state !== 'SPLIT_B')
+      p.mesh.position.copy(p.position);
+  }
+
+  // ================================================================
+  // LIGHTNING — fire periodically, check splits on first frame
+  // ================================================================
+  critTimer += dt;
+  if (critTimer > critInterval && lightningBolts.length < 2) {
+    fireLightning(randomOnSphere(4.0), randomOnSphere(0.3), 0xfde68a);
+    critTimer    = 0;
+    critInterval = 3.5 + Math.random()*2.5;
+  }
+  reflTimer += dt;
+  if (reflTimer > reflInterval && lightningBolts.length < 2) {
+    fireLightning(randomOnSphere(1.0), randomOnSphere(4.0), 0xe8b04b);
+    reflTimer    = 0;
+    reflInterval = 5.0 + Math.random()*3;
+  }
+
+  const now = Date.now();
+  for (let i=lightningBolts.length-1; i>=0; i--) {
+    const b   = lightningBolts[i];
+    const age = (now - b.createdAt)/1000;
+    if (!b.checked) { checkBoltSplits(b.pts); b.checked=true; }
+    if (age > b.lifetime) {
+      scene.remove(b.line);
+      b.line.geometry.dispose();
+      b.line.material.dispose();
+      lightningBolts.splice(i,1);
+    } else {
+      b.line.material.opacity = 1 - age/b.lifetime;
+    }
+  }
+
+  // ---- Rings ----
+  ringGroup.children[0].rotation.y += dt*0.18;
+  ringGroup.children[1].rotation.x -= dt*0.22;
+  ringGroup.children[2].rotation.z += dt*0.14;
+
+  // ---- Snake ----
+  updateSnake(dt);
+
+  controls.update();
+  composer.render();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// ================================================================
+// RESIZE
+// ================================================================
+window.addEventListener('resize', () => {
+  const w=container.clientWidth, h=container.clientHeight;
+  if (w>0 && h>0) {
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w,h);
+    composer.setSize(w,h);
+  }
+});
+</script>
+</body>
+</html>

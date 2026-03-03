@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metacognitive Orrery</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #1a2332; }
+#orrery-canvas { width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="orrery-canvas"></canvas>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls }    from 'three/addons/controls/OrbitControls.js';
+import * as CANNON          from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js';
+import { EffectComposer }   from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }       from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass }  from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { Line2 }            from 'three/addons/lines/Line2.js';
+import { LineGeometry }     from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial }     from 'three/addons/lines/LineMaterial.js';
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+const enabledElements = {
+  selfIdentity: true,
+  exploration: true,
+  research: true,
+  criticalThinking: true,
+  reflection: true,
+  synthesis: true,
+};
+
+const animationSpeed = 1.0;
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+function createNoise2D() {
+  const permutation = [];
+  for (let i = 0; i < 256; i++) permutation[i] = i;
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [permutation[i], permutation[j]] = [permutation[j], permutation[i]];
+  }
+  const p = [...permutation, ...permutation];
+  function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+  function lerp(a, b, t) { return a + t * (b - a); }
+  function grad(hash, x, y) {
+    const h = hash & 3, u = h < 2 ? x : y, v = h < 2 ? y : x;
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+  }
+  return function(x, y) {
+    const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+    x -= Math.floor(x); y -= Math.floor(y);
+    const u = fade(x), v = fade(y);
+    const A = p[X] + Y, B = p[X + 1] + Y;
+    return lerp(lerp(grad(p[A], x, y), grad(p[B], x-1, y), u),
+                lerp(grad(p[A+1], x, y-1), grad(p[B+1], x-1, y-1), u), v);
+  };
+}
+
+function getRandomPointOnSphere(radius) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi   = Math.acos(2 * Math.random() - 1);
+  return new THREE.Vector3(
+    radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.sin(phi) * Math.sin(theta),
+    radius * Math.cos(phi)
+  );
+}
+
+function findAxisIntersection(origin, direction, axisRadius) {
+  return axisRadius - origin.length();
+}
+
+function createParticleCanvas() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.2, 'rgba(255,255,255,0.8)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 64);
+  return c;
+}
+
+// ============================================================================
+// LIGHTNING HELPERS  (fat Line2 + branching)
+// ============================================================================
+
+// Shared resolution vector — updated once in resize handler; passed to each material.
+// Each LineMaterial gets its own copy so we track them for resize.
+const _lineMaterials = [];
+
+function buildBoltPoints(start, end, jaggedness) {
+  const pts = [start.clone()];
+  const segs = 18;
+  for (let i = 1; i < segs; i++) {
+    const t = i / segs;
+    const pt = new THREE.Vector3().lerpVectors(start, end, t);
+    const jitter = jaggedness * Math.sin(t * Math.PI) * 0.8;
+    const perp = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5)
+      .normalize().multiplyScalar((Math.random()-0.5) * jitter);
+    pt.add(perp);
+    pts.push(pt);
+  }
+  pts.push(end.clone());
+  return pts;
+}
+
+function makeBoltLine(points, color, opacity, w, h) {
+  const geo = new LineGeometry();
+  geo.setPositions(points.flatMap(p => [p.x, p.y, p.z]));
+  const mat = new LineMaterial({
+    color,
+    linewidth: 2.5,
+    transparent: true,
+    opacity,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    resolution: new THREE.Vector2(w, h),
+  });
+  _lineMaterials.push(mat);
+  const line = new Line2(geo, mat);
+  line.userData.baseOpacity = opacity;
+  return line;
+}
+
+function generateLightningBolt(start, end, jaggedness = 0.8, color = 0xfde68a) {
+  const group = new THREE.Group();
+  const w = container.clientWidth, h = container.clientHeight;
+  const pts = buildBoltPoints(start, end, jaggedness);
+  group.add(makeBoltLine(pts, color, 1.0, w, h));
+  return group;
+}
+
+// ============================================================================
+// MAIN INITIALIZATION
+// ============================================================================
+
+const canvas    = document.getElementById('orrery-canvas');
+const container = canvas.parentElement;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#1a2332');
+scene.fog = new THREE.Fog('#1a2332', 8, 20);
+
+const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
+camera.position.set(8, 6, 8);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 5;
+controls.maxDistance = 15;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
+controls.enablePan = false;
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+// ---- Bloom composer ----
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(container.clientWidth, container.clientHeight),
+  0.35,  // strength  — subtle glow, not a supernova
+  0.6,   // radius
+  0.45   // threshold — only the brightest emissive elements bloom
+);
+composer.addPass(bloomPass);
+
+// ============================================================================
+// LIGHTING
+// ============================================================================
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
+sunLight.position.set(5, 8, 5);
+scene.add(sunLight);
+
+const nucleusLight = new THREE.PointLight(0xFFE6A0, 3, 8);
+nucleusLight.position.set(0, 0, 0);
+scene.add(nucleusLight);
+
+const axisRadius = 4.0;
+const axisLightConfigs = [
+  { color: 0x0EA5E9, position: new THREE.Vector3( axisRadius, 0, 0) },
+  { color: 0x0EA5E9, position: new THREE.Vector3(-axisRadius, 0, 0) },
+  { color: 0xEC4899, position: new THREE.Vector3(0,  axisRadius, 0) },
+  { color: 0xEC4899, position: new THREE.Vector3(0, -axisRadius, 0) },
+  { color: 0xA855F7, position: new THREE.Vector3(0, 0,  axisRadius) },
+  { color: 0xA855F7, position: new THREE.Vector3(0, 0, -axisRadius) },
+];
+axisLightConfigs.forEach(cfg => {
+  const l = new THREE.PointLight(cfg.color, 1.0, 6);
+  l.position.copy(cfg.position);
+  scene.add(l);
+});
+
+// ============================================================================
+// PHYSICS WORLD
+// ============================================================================
+const world = new CANNON.World();
+world.gravity.set(0, 0, 0);
+world.broadphase = new CANNON.SAPBroadphase(world);
+
+const defaultMaterial = new CANNON.Material('default');
+const defaultContactMaterial = new CANNON.ContactMaterial(
+  defaultMaterial, defaultMaterial, { friction: 0.0, restitution: 1.0 }
+);
+world.addContactMaterial(defaultContactMaterial);
+world.defaultContactMaterial = defaultContactMaterial;
+
+const nucleusRadius = 1.0;
+const outerRadius   = axisRadius - 0.1;
+
+// ============================================================================
+// 1. SELF-IDENTITY: BREATHING NUCLEUS
+// ============================================================================
+const noise2D = createNoise2D();
+
+const nucleusGeometry = new THREE.SphereGeometry(nucleusRadius, 64, 64);
+const nucleusMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    time:           { value: 0.0 },
+    breathIntensity: { value: 1.0 },
+    glowColor:      { value: new THREE.Color(0xFFE6A0) },
+  },
+  vertexShader: `
+    varying vec3 vNormal; varying vec3 vPosition;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      vPosition = position;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform float time; uniform float breathIntensity; uniform vec3 glowColor;
+    varying vec3 vNormal; varying vec3 vPosition;
+    float noise(vec3 p) { return fract(sin(dot(p, vec3(12.9898,78.233,45.543)))*43758.5453); }
+    void main() {
+      vec3 viewDir = normalize(cameraPosition - vPosition);
+      float fresnel   = pow(1.0 - dot(vNormal, viewDir), 3.0);
+      float noiseVal  = noise(vPosition*3.0 + time*0.5)*0.3;
+      float coreGlow  = 0.7 + noiseVal;
+      vec3 col = glowColor * (coreGlow + fresnel*0.5) * breathIntensity;
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `,
+  side: THREE.DoubleSide,
+});
+const nucleusSphere = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+scene.add(nucleusSphere);
+
+// ============================================================================
+// 2. GYROSCOPE RINGS
+// ============================================================================
+const ringGroup  = new THREE.Group();
+const ringColors = [0x0EA5E9, 0xEC4899, 0xA855F7];
+for (let i = 0; i < 3; i++) {
+  const geo = new THREE.TorusGeometry(axisRadius, 0.04, 16, 128);
+  const mat = new THREE.MeshStandardMaterial({
+    color: ringColors[i], emissive: ringColors[i], emissiveIntensity: 0.4,
+    metalness: 0.8, roughness: 0.2, transparent: true, opacity: 0.7,
+  });
+  const ring = new THREE.Mesh(geo, mat);
+  if (i === 0) ring.rotation.y = Math.PI / 2;
+  if (i === 1) ring.rotation.x = Math.PI / 2;
+  ringGroup.add(ring);
+}
+scene.add(ringGroup);
+
+// ============================================================================
+// 3. EXPLORATION: PARTICLE CLOUD
+// ============================================================================
+const explorationParticles = [];
+const particleTexture = new THREE.CanvasTexture(createParticleCanvas());
+const particleMaterial = new THREE.PointsMaterial({
+  color: 0xfcd34d, size: 0.2, map: particleTexture,
+  transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.8,
+});
+
+for (let i = 0; i < 120; i++) {
+  const pos = getRandomPointOnSphere(nucleusRadius + 0.5 + Math.random() * 2);
+  const body = new CANNON.Body({
+    mass: 0.01, shape: new CANNON.Sphere(0.05),
+    position: new CANNON.Vec3(pos.x, pos.y, pos.z),
+    velocity: new CANNON.Vec3((Math.random()-0.5)*1.5, (Math.random()-0.5)*1.5, (Math.random()-0.5)*1.5),
+    material: defaultMaterial,
+  });
+  world.addBody(body);
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute([0,0,0], 3));
+  const mesh = new THREE.Points(geo, particleMaterial.clone());
+  scene.add(mesh);
+  explorationParticles.push({ body, mesh, lifetime: 5 + Math.random()*10, age: Math.random()*5 });
+}
+
+// ============================================================================
+// 4. RESEARCH: GROWING BEAMS
+// ============================================================================
+const researchBeams    = [];
+const MAX_RESEARCH_BEAMS = 8;
+
+function createResearchBeam() {
+  const direction = getRandomPointOnSphere(1).normalize();
+  const maxLength = findAxisIntersection(new THREE.Vector3(), direction, axisRadius);
+  const geo = new THREE.CylinderGeometry(0.03, 0.03, 1, 16);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xc9973a, emissive: 0xc9973a, emissiveIntensity: 0.8,
+    metalness: 0.7, roughness: 0.2, transparent: true, opacity: 0.8,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  return { mesh, direction, length: 0, maxLength, growing: true, opacity: 0.8 };
+}
+
+// ============================================================================
+// 5. CRITICAL THINKING & REFLECTION: LIGHTNING  (branching, fat Line2)
+// ============================================================================
+const lightningBolts = [];
+const MAX_LIGHTNING  = 2;
+
+function createCriticalThinkingLightning() {
+  const axisPoint    = getRandomPointOnSphere(axisRadius);
+  const nucleusPoint = getRandomPointOnSphere(nucleusRadius * 0.3);
+  const group = generateLightningBolt(axisPoint, nucleusPoint, 0.8, 0xfde68a);
+  scene.add(group);
+  lightningBolts.push({ group, createdAt: Date.now(), lifetime: 0.3 + Math.random()*0.3 });
+  nucleusLight.intensity = 5;
+  setTimeout(() => (nucleusLight.intensity = 3), 50);
+}
+
+function createReflectionLightning() {
+  const nucleusPoint = getRandomPointOnSphere(nucleusRadius);
+  const axisPoint    = getRandomPointOnSphere(axisRadius);
+  const group = generateLightningBolt(nucleusPoint, axisPoint, 0.6, 0xe8b04b);
+  scene.add(group);
+  lightningBolts.push({ group, createdAt: Date.now(), lifetime: 0.3 + Math.random()*0.3 });
+}
+
+// ============================================================================
+// 6. SYNTHESIS: AUTONOMOUS SNAKE
+// ============================================================================
+const SNAKE_NUM_SEGMENTS      = 32;
+const SNAKE_SPEED             = 1.4;
+const SNAKE_STEPS_PER_SEGMENT = 7;
+const SNAKE_OUTER_BOUND       = axisRadius - 0.35;
+const SNAKE_INNER_BOUND       = nucleusRadius + 0.65;
+
+const snakeMeshes = [];
+for (let i = 0; i <= SNAKE_NUM_SEGMENTS; i++) {
+  const t = i / SNAKE_NUM_SEGMENTS;
+  const r = Math.max(0.09 - t * 0.062, 0.02);
+  const geo = new THREE.SphereGeometry(r, 8, 8);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xFAB005, emissive: 0xFAB005,
+    emissiveIntensity: i === 0 ? 1.4 : 0.75 - t*0.4,
+    metalness: 0.2, roughness: 0.5,
+    transparent: t > 0.6,
+    opacity: t > 0.6 ? 1 - ((t-0.6)/0.4)*0.8 : 1,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  snakeMeshes.push(mesh);
+}
+
+const snakeHeadPos    = new THREE.Vector3(2.2, 0.9, 0.4);
+const snakeHeadDir    = new THREE.Vector3(-0.3, 0.6, 0.7).normalize();
+const snakeWanderTarget = snakeHeadDir.clone();
+let snakeWanderTimer  = 0;
+let snakeWanderInterval = 2.0 + Math.random() * 2.0;
+const snakePosHistory = [];
+const SNAKE_MAX_HISTORY = (SNAKE_NUM_SEGMENTS + 4) * SNAKE_STEPS_PER_SEGMENT;
+
+function updateSnake(dt) {
+  snakeWanderTimer += dt;
+  if (snakeWanderTimer > snakeWanderInterval) {
+    snakeWanderTimer = 0;
+    snakeWanderInterval = 1.8 + Math.random() * 2.4;
+    const rand = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5);
+    snakeWanderTarget.copy(snakeHeadDir).add(rand.multiplyScalar(1.3)).normalize();
+  }
+  snakeHeadDir.lerp(snakeWanderTarget, dt * 2.2).normalize();
+
+  const dist = snakeHeadPos.length();
+  if (dist > SNAKE_OUTER_BOUND - 0.7) {
+    const urgency = Math.min((dist - (SNAKE_OUTER_BOUND - 0.7)) / 0.7, 1.0);
+    const steer = snakeHeadPos.clone().normalize().negate();
+    snakeHeadDir.lerp(steer, dt * 9 * urgency).normalize();
+    snakeWanderTarget.copy(snakeHeadDir);
+  }
+  if (dist < SNAKE_INNER_BOUND) {
+    const steer = snakeHeadPos.clone().normalize();
+    snakeHeadDir.lerp(steer, dt * 9).normalize();
+    snakeWanderTarget.copy(snakeHeadDir);
+  }
+
+  snakeHeadPos.addScaledVector(snakeHeadDir, SNAKE_SPEED * dt);
+  snakePosHistory.unshift(snakeHeadPos.clone());
+  if (snakePosHistory.length > SNAKE_MAX_HISTORY) snakePosHistory.pop();
+
+  snakeMeshes[0].position.copy(snakeHeadPos);
+  for (let i = 1; i <= SNAKE_NUM_SEGMENTS; i++) {
+    const idx = Math.min(i * SNAKE_STEPS_PER_SEGMENT, snakePosHistory.length - 1);
+    snakeMeshes[i].position.copy(snakePosHistory[idx]);
+  }
+}
+
+// ============================================================================
+// ANIMATION LOOP
+// ============================================================================
+const clock = new THREE.Clock();
+let researchBeamTimer    = 0;
+let criticalThinkingTimer = 0;
+let reflectionTimer       = 0;
+
+function animate() {
+  const deltaTime  = clock.getDelta() * animationSpeed;
+  const elapsedTime = clock.getElapsedTime();
+
+  world.step(1/60, deltaTime, 3);
+
+  // 1. Self-Identity
+  if (enabledElements.selfIdentity) {
+    const breathIntensity = 0.8 + noise2D(elapsedTime * 0.5, 0) * 0.4;
+    nucleusMaterial.uniforms.time.value = elapsedTime;
+    nucleusMaterial.uniforms.breathIntensity.value = breathIntensity;
+    nucleusLight.intensity = 2.5 + breathIntensity * 0.5;
+  }
+
+  // 2. Exploration particles
+  if (enabledElements.exploration) {
+    explorationParticles.forEach(p => {
+      p.age += deltaTime;
+      const fadeIn  = Math.min(p.age / 1, 1);
+      const fadeOut = Math.max(1 - (p.age - p.lifetime + 1), 0);
+      p.mesh.material.opacity = Math.min(fadeIn, fadeOut) * 0.8;
+      if (p.age > p.lifetime) {
+        p.age = 0;
+        const np = getRandomPointOnSphere(nucleusRadius + 0.5 + Math.random()*2);
+        p.body.position.set(np.x, np.y, np.z);
+        p.body.velocity.set((Math.random()-0.5)*1.5, (Math.random()-0.5)*1.5, (Math.random()-0.5)*1.5);
+      }
+      p.mesh.position.copy(p.body.position);
+      const d = p.body.position.length();
+      if (d < nucleusRadius + 0.3) {
+        const push = p.body.position.unit().scale(0.02);
+        p.body.velocity.vadd(push, p.body.velocity);
+      }
+      if (d > outerRadius - 0.3) {
+        const push = p.body.position.unit().scale(-0.02);
+        p.body.velocity.vadd(push, p.body.velocity);
+      }
+    });
+  }
+
+  // 3. Research beams
+  if (enabledElements.research) {
+    researchBeamTimer += deltaTime;
+    if (researchBeamTimer > 2 && researchBeams.length < MAX_RESEARCH_BEAMS) {
+      researchBeams.push(createResearchBeam());
+      researchBeamTimer = 0;
+    }
+    for (let i = researchBeams.length - 1; i >= 0; i--) {
+      const beam = researchBeams[i];
+      if (beam.growing) {
+        beam.length += deltaTime * 1.5;
+        if (beam.length >= beam.maxLength) beam.growing = false;
+        beam.mesh.scale.set(1, beam.length, 1);
+        const mid = beam.direction.clone().multiplyScalar(nucleusRadius + beam.length / 2);
+        beam.mesh.position.copy(mid);
+        beam.mesh.lookAt(beam.direction.clone().multiplyScalar(10));
+        beam.mesh.rotateX(Math.PI / 2);
+      } else {
+        beam.opacity -= deltaTime * 2;
+        beam.mesh.material.opacity = Math.max(beam.opacity, 0);
+        if (beam.opacity <= 0) {
+          scene.remove(beam.mesh);
+          beam.mesh.geometry.dispose();
+          beam.mesh.material.dispose();
+          researchBeams.splice(i, 1);
+        }
+      }
+    }
+  }
+
+  // 4. Critical Thinking lightning
+  if (enabledElements.criticalThinking) {
+    criticalThinkingTimer += deltaTime;
+    if (criticalThinkingTimer > 2.5 && lightningBolts.length < MAX_LIGHTNING) {
+      createCriticalThinkingLightning();
+      criticalThinkingTimer = 0;
+    }
+  }
+
+  // 5. Reflection lightning
+  if (enabledElements.reflection) {
+    reflectionTimer += deltaTime;
+    if (reflectionTimer > 3.5 && lightningBolts.length < MAX_LIGHTNING) {
+      createReflectionLightning();
+      reflectionTimer = 0;
+    }
+  }
+
+  // Fade and clean up lightning bolts
+  const now = Date.now();
+  for (let i = lightningBolts.length - 1; i >= 0; i--) {
+    const bolt = lightningBolts[i];
+    const age  = (now - bolt.createdAt) / 1000;
+    if (age > bolt.lifetime) {
+      scene.remove(bolt.group);
+      bolt.group.children.forEach(child => {
+        child.geometry.dispose();
+        const idx = _lineMaterials.indexOf(child.material);
+        if (idx !== -1) _lineMaterials.splice(idx, 1);
+        child.material.dispose();
+      });
+      lightningBolts.splice(i, 1);
+    } else {
+      const fadeOut = 1 - age / bolt.lifetime;
+      bolt.group.children.forEach(child => {
+        child.material.opacity = child.userData.baseOpacity * fadeOut;
+      });
+    }
+  }
+
+  // 6. Synthesis snake
+  if (enabledElements.synthesis) updateSnake(deltaTime);
+  snakeMeshes.forEach(m => { m.visible = enabledElements.synthesis; });
+
+  // Rings
+  ringGroup.children[0].rotation.y += deltaTime * 0.2;
+  ringGroup.children[1].rotation.x -= deltaTime * 0.25;
+  ringGroup.children[2].rotation.z += deltaTime * 0.15;
+
+  // Visibility
+  nucleusSphere.visible = enabledElements.selfIdentity;
+  explorationParticles.forEach(p => { p.mesh.visible = enabledElements.exploration; });
+  researchBeams.forEach(b => { b.mesh.visible = enabledElements.research; });
+
+  controls.update();
+  composer.render();   // bloom composer replaces renderer.render
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// ============================================================================
+// RESIZE HANDLER
+// ============================================================================
+function handleResize() {
+  const w = container.clientWidth, h = container.clientHeight;
+  if (w > 0 && h > 0) {
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+    composer.setSize(w, h);
+    _lineMaterials.forEach(m => m.resolution.set(w, h));
+  }
+}
+window.addEventListener('resize', handleResize);
+
+</script>
+</body>
+</html>
