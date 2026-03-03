@@ -897,6 +897,25 @@ main {
 /* ============================================================
    PAGE-SPECIFIC: Currere
    ============================================================ */
+
+.currere-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.currere-story p {
+  line-height: var(--leading-loose);
+  margin-bottom: var(--space-5);
+}
+
+@media (max-width: 900px) {
+  .currere-split {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+}
 .currere-hero {
   background: #1d1a10;
   color: #f5efe3;
