@@ -101,15 +101,59 @@
           <p style="color: rgba(255,255,255,0.5);">MA Thesis, George Washington University, Graduate School of Education and Human Development</p>
         </div>
         <div class="hero-image">
-          <iframe
-            src="visualizations/metacognitive-orrery-v1.html"
-            width="420"
-            height="420"
-            frameborder="0"
-            scrolling="no"
-            title="Metacognitive Orrery — a living model of thinking systems"
-            style="display: block; border-radius: 0.5rem; border: none;"
-          ></iframe>
+          <div class="orrery-container" id="orrery-container">
+            <iframe
+              src="visualizations/metacognitive-orrery-v1.html"
+              width="420"
+              height="420"
+              frameborder="0"
+              scrolling="no"
+              title="Metacognitive Orrery — a living model of thinking systems"
+              style="display: block; border: none;"
+            ></iframe>
+            <div class="orrery-popup" role="complementary" aria-label="About this visualization">
+              <nav class="orrery-popup__tabs" role="tablist" aria-label="Reading layers">
+                <button class="orrery-tab orrery-tab--active" role="tab" data-layer="surface" aria-selected="true">Surface</button>
+                <button class="orrery-tab" role="tab" data-layer="structure" aria-selected="false">Structure</button>
+                <button class="orrery-tab" role="tab" data-layer="theory" aria-selected="false">Theory</button>
+                <button class="orrery-tab" role="tab" data-layer="meta" aria-selected="false">Meta</button>
+              </nav>
+              <div class="orrery-popup__body">
+
+                <div class="orrery-layer orrery-layer--active" id="layer-surface" role="tabpanel">
+                  <p class="orrery-layer__title">The Metacognitive Orrery</p>
+                  <ul class="orrery-elements">
+                    <li><strong>Nucleus</strong> &mdash; <em>Endospection</em>. Your self-identity, always shifting, always at the center. It pulses because identity is never static; everything else orbits it because every habit requires a "who" doing the thinking.</li>
+                    <li><strong>Particles</strong> &mdash; <em>Omniperegrination</em>. Undirected curiosity: noema drifting along invisible traces. Some fizzle. Some cluster. Some collide into something new.</li>
+                    <li><strong>Rising axes</strong> &mdash; <em>Constellaration</em>. Guiding questions rising from the self, creating gravitational pull &mdash; the shift from <i>I wonder</i> to <i>I am investigating</i>.</li>
+                    <li><strong>Lightning inward</strong> &mdash; <em>Refraction</em>. External frameworks striking the self. The flash reveals the shape of your lens &mdash; not removing bias, but learning to see it.</li>
+                    <li><strong>Lightning outward</strong> &mdash; <em>Exospection</em>. Projections reaching toward modeled others &mdash; your simulation of how your thoughts land beyond yourself.</li>
+                    <li><strong>Weaving thread</strong> &mdash; <em>Synthesis</em>. The creation of something that didn't exist before. Not summarization &mdash; genuine novelty.</li>
+                    <li><strong>Rotating rings</strong> &mdash; <em>The 3D Compass</em>. Three assessment axes: Independence&harr;Collaboration, Theoretical&harr;Practical, Structured&harr;Flexible.</li>
+                  </ul>
+                </div>
+
+                <div class="orrery-layer" id="layer-structure" role="tabpanel">
+                  <p class="orrery-layer__title">An Orrery, Not a Ladder</p>
+                  <p>An orrery models a solar system &mdash; where nothing comes first, nothing is higher, and the planets sustain the sun by orbiting it. Learning is not Bloom's hierarchy, Tyler's objectives, or a scope-and-sequence conveyor belt. It is a system of interdependent habits orbiting a center that is itself shaped by the orbits.</p>
+                  <p>The Endosphere exists because the habits sustain it. The habits matter because the Endosphere anchors them. Content still matters &mdash; it is the material the particles are made of. But it should not be the foundation of curriculum design. The foundation should be learning itself.</p>
+                </div>
+
+                <div class="orrery-layer" id="layer-theory" role="tabpanel">
+                  <p class="orrery-layer__title">Theoretical Foundations</p>
+                  <p>This model synthesizes theorists who organized learning around a center of gravity rather than a line of progression: Dewey's experience, Montessori's prepared environment, Noddings' ethics of care, Bronfenbrenner's ecological systems, Fink's significant learning.</p>
+                  <p>The three rings are a reminder that theory without assessment is poetry. The interior &mdash; the six habits &mdash; answers <em>"What should learning look like?"</em> The compass answers <em>"How do we know it's happening?"</em> Structure without flexibility is compliance. Flexibility without structure is noise.</p>
+                </div>
+
+                <div class="orrery-layer" id="layer-meta" role="tabpanel">
+                  <p class="orrery-layer__title">What You're Doing Right Now</p>
+                  <p>You identified something (<em>Endospection</em>). Explored it with curiosity (<em>Omniperegrination</em>). Examined its components (<em>Constellaration</em>). Questioned whether you agree, whether your biases shape what you see (<em>Refraction</em>). Considered how it might land for someone else (<em>Exospection</em>). And are now constructing your own understanding that didn't exist before you arrived (<em>Synthesis</em>).</p>
+                  <p>The orrery doesn't just represent metacognition. <em>It induces it.</em> That's the point.</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

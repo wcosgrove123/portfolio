@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initActiveNav();
   initSmoothReveal();
   initCaseStudyTabs();
+  initOrreryPopup();
   initHeaderScroll();
   initScrollProgress();
 });
@@ -97,6 +98,29 @@ function initScrollProgress() {
     bar.style.width = max > 0 ? (window.scrollY / max * 100) + '%' : '0%';
   };
   window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+
+/* --- Orrery Popup Tabs (Research page) --- */
+function initOrreryPopup() {
+  const tabs = document.querySelectorAll('.orrery-tab');
+  if (!tabs.length) return;
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const layer = tab.dataset.layer;
+      document.querySelectorAll('.orrery-tab').forEach(t => {
+        t.classList.remove('orrery-tab--active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('.orrery-layer').forEach(l => {
+        l.classList.remove('orrery-layer--active');
+      });
+      tab.classList.add('orrery-tab--active');
+      tab.setAttribute('aria-selected', 'true');
+      document.getElementById('layer-' + layer).classList.add('orrery-layer--active');
+    });
+  });
 }
 
 
