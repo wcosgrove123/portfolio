@@ -336,6 +336,14 @@
       </div>
     </div>
 
+    <!-- Save for Later -->
+    <button id="save-btn" class="btn btn-secondary" onclick="saveForLater()" style="width:100%;margin-bottom:28px;">
+      <span class="btn-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </span>
+      <span class="btn-label" id="save-label">Save for Later</span>
+    </button>
+
     <!-- Footer / View More -->
     <div class="footer">
       <a href="https://wcosgrove123.github.io/portfolio" class="footer-link">
@@ -346,5 +354,25 @@
     </div>
 
   </div>
+
+  <script>
+    function saveForLater() {
+      const url = window.location.href;
+      const title = 'Wil Cosgrove | Educator';
+      const text = 'Wil Cosgrove - Educator & Curriculum Designer, Washington DC';
+
+      // Use native share sheet on mobile (lets them text, save to notes, etc.)
+      if (navigator.share) {
+        navigator.share({ title, text, url }).catch(() => {});
+      } else {
+        // Desktop fallback: copy link to clipboard
+        navigator.clipboard.writeText(url).then(() => {
+          const label = document.getElementById('save-label');
+          label.textContent = 'Link Copied!';
+          setTimeout(() => { label.textContent = 'Save for Later'; }, 2000);
+        });
+      }
+    }
+  </script>
 </body>
 </html>
