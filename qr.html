@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan to Connect | Wil Cosgrove</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f6;
+      --text: #1a1a1a;
+      --muted: #5a5a5a;
+      --accent: #b8942e;
+      --border: #e8e5e0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .card {
+      text-align: center;
+      padding: 40px 32px;
+      max-width: 380px;
+      width: 100%;
+    }
+
+    .name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 32px;
+    }
+
+    .qr-frame {
+      display: inline-block;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .qr-frame canvas {
+      display: block;
+      border-radius: 4px;
+    }
+
+    .prompt {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .prompt-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Print styles */
+    @media print {
+      body { background: #fff; }
+      .card { padding: 60px 20px; }
+      .qr-frame { box-shadow: none; border: 2px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="name">Wil Cosgrove</h1>
+    <p class="tagline">Educator &bull; Curriculum Designer &bull; Washington, DC</p>
+    <div class="qr-frame">
+      <canvas id="qr"></canvas>
+    </div>
+    <p class="prompt">Scan to connect</p>
+    <p class="prompt-sub">View my bio, resumes, and portfolio</p>
+  </div>
+
+  <script>
+    // Minimal QR Code generator (QR Code Model 2, alphanumeric, error correction M)
+    // Using a lightweight inline implementation
+    !function(){
+      // We'll use a simple approach: load qrcode lib from CDN and render
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js';
+      s.onload = function() {
+        const qr = qrcode(0, 'M');
+        qr.addData('https://wcosgrove123.github.io/portfolio/connect.html');
+        qr.make();
+
+        const canvas = document.getElementById('qr');
+        const size = 220;
+        const modules = qr.getModuleCount();
+        const cellSize = size / modules;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#faf9f6';
+        ctx.fillRect(0, 0, size, size);
+
+        ctx.fillStyle = '#1a1a1a';
+        for (let row = 0; row < modules; row++) {
+          for (let col = 0; col < modules; col++) {
+            if (qr.isDark(row, col)) {
+              ctx.fillRect(
+                Math.round(col * cellSize),
+                Math.round(row * cellSize),
+                Math.ceil(cellSize),
+                Math.ceil(cellSize)
+              );
+            }
+          }
+        }
+      };
+      document.head.appendChild(s);
+    }();
+  </script>
+</body>
+</html>
