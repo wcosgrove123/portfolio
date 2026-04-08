@@ -193,14 +193,133 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
+
+    /* Flow Map */
+    .flow-section {
+      margin-bottom: 28px;
+    }
+    .flow-select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%237a7d88' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .flow-step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      position: relative;
+    }
+    .flow-step:first-child { border-radius: 12px 12px 0 0; }
+    .flow-step:last-child { border-radius: 0 0 12px 12px; }
+    .flow-phase {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .flow-phase.hook { color: var(--coral); }
+    .flow-phase.bridge { color: var(--gold); }
+    .flow-phase.close { color: var(--green); }
+    .flow-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .flow-text {
+      font-size: 12px;
+      color: rgba(232,230,225,0.75);
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+    .flow-connector {
+      width: 2px;
+      height: 8px;
+      background: var(--border);
+      margin-left: 20px;
+    }
+    .flow-branch {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 2px;
+      padding-left: 16px;
+      border-left: 2px solid var(--border);
+      margin-left: 8px;
+    }
+    .flow-branch .flow-step {
+      border-radius: 10px;
+      background: rgba(255,255,255,0.015);
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--card);
+      color: var(--dim);
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab.active {
+      background: var(--coral);
+      color: #fff;
+    }
+    .view { display: none; }
+    .view.active { display: block; }
   </style>
 </head>
 <body>
 
-<h1>School Intel</h1>
+<h1>Fair Intel</h1>
 <p class="subtitle">DCPS Hiring Fair &mdash; April 9, 2026</p>
 
-<div id="cards"></div>
+<div class="tab-bar">
+  <button class="tab active" onclick="switchTab('flow')">Conversation Flow</button>
+  <button class="tab" onclick="switchTab('schools')">School Cards</button>
+</div>
+
+<div id="flow-view" class="view active">
+  <div class="flow-section">
+    <select class="flow-select" id="school-select" onchange="updateFlow()">
+      <option value="">Select a school...</option>
+    </select>
+    <div id="flow-steps" class="flow-steps"></div>
+  </div>
+</div>
+
+<div id="schools-view" class="view">
+  <div id="cards"></div>
+</div>
 
 <button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&uarr;</button>
 
@@ -417,6 +536,98 @@ function toggle(el) {
   el.classList.toggle('open');
 }
 
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab === 'flow' && i === 0) || (tab === 'schools' && i === 1));
+  });
+  document.getElementById('flow-view').classList.toggle('active', tab === 'flow');
+  document.getElementById('schools-view').classList.toggle('active', tab === 'schools');
+  window.scrollTo({ top: 0 });
+}
+
+// ── FLOW MAP ──
+// Populate school select
+const select = document.getElementById('school-select');
+schools.filter(s => s.tier <= 2).forEach((s, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  const tag = s.vacancyCount > 0 ? ` (${s.vacancyCount} opening${s.vacancyCount > 1 ? 's' : ''})` : ' (no vacancy)';
+  opt.textContent = s.school + tag;
+  select.appendChild(opt);
+});
+
+function getFlowSteps(s) {
+  if (!s) return getGenericFlow();
+
+  const hasVacancy = s.vacancyCount > 0;
+  const schoolName = s.school;
+  const specific = s.talkingPoints?.[0] || '';
+  const question = s.questionsToAsk?.[0] || "What's the next step I can take after today?";
+
+  return [
+    {
+      phase: 'hook', label: 'Approach',
+      text: s.openingLine
+    },
+    {
+      phase: 'hook', label: 'Philosophy Hook',
+      text: "\"I believe social studies should be something students feel part of, not just something that happened.\"\n\nStop. Let it breathe. Wait for their response."
+    },
+    {
+      phase: 'bridge', label: 'They say: "Tell me more"',
+      text: `"I student taught AP US History and AP Government at Bethesda-Chevy Chase. I designed full units and led all five classes independently. I'm finishing my masters in curriculum design at GW and I hold my OSSE credential."\n\n${s.hook ? 'Then weave in: ' + specific : ''}`
+    },
+    {
+      phase: 'bridge', label: 'They say: "What subject?"',
+      text: `"Social studies, 7-12. OSSE certified. I taught AP US History and AP Government at BCC."\n\nThen pivot: "${question}"`
+    },
+    {
+      phase: 'bridge', label: 'They say: "We\'re full"',
+      text: hasVacancy
+        ? `"I saw there ${s.vacancyCount > 1 ? 'were ' + s.vacancyCount + ' SS openings' : 'was an SS opening'} listed for ${schoolName} — is that still available?"\n\nIf truly full: "Could I leave my resume in case something opens up? I'd love to stay on your radar."`
+        : `"Totally understand. Could I leave my resume in case something opens up? I'd love to stay on your radar."\n\nGet their card. Move on gracefully.`
+    },
+    {
+      phase: 'close', label: 'Conversation Deepens',
+      text: `They're asking about your background and plans. This is the green light.\n\n${s.hasPool ? 'Share the swimming/coaching story — they have a pool.' : 'Share the Swim Safe / coaching story.'}\nMention: ${s.talkingPoints?.slice(0, 2).join('; ') || 'your teaching philosophy'}\n\nAsk THEM questions. Listen more than you talk.`
+    },
+    {
+      phase: 'close', label: 'The Close',
+      text: `"I'd love to come see ${schoolName}. Could we set up a visit or a follow-up conversation?"\n\nGet their card. Write down what you discussed. Send a thank-you email TODAY.`
+    }
+  ];
+}
+
+function getGenericFlow() {
+  return [
+    { phase: 'hook', label: 'Approach', text: "Walk up, smile, make eye contact.\n\"Hi, I'm Wil Cosgrove. I've had my eye on [school] because [specific reason].\"" },
+    { phase: 'hook', label: 'Philosophy Hook', text: "\"I believe social studies should be something students feel part of, not just something that happened.\"\n\nStop. Let it breathe. Wait for their response." },
+    { phase: 'bridge', label: 'They say: "Tell me more"', text: "\"I student taught AP US History and AP Government at BCC, designed full units, and led five classes independently. I'm finishing my masters in curriculum design at GW and I hold my OSSE credential.\"" },
+    { phase: 'bridge', label: 'They say: "What subject?"', text: "\"Social studies, 7-12. OSSE certified. I taught AP US History and AP Government at BCC.\"\n\nThen pivot back: \"What are you looking for in your SS department?\"" },
+    { phase: 'bridge', label: 'They say: "We\'re full"', text: "\"Totally understand. Could I leave my resume in case something opens up? I'd love to stay on your radar.\"\n\nGet their card. Move on gracefully." },
+    { phase: 'close', label: 'Conversation Deepens', text: "They're asking about your background, your future plans. This is the green light.\n\nShare the swimming/coaching story.\nAsk THEM questions.\nListen more than you talk." },
+    { phase: 'close', label: 'The Close', text: "\"I'd love to come see your school. Could we set up a visit or a follow-up conversation?\"\n\nGet their card. Write down what you discussed. Send a thank-you email TODAY." },
+  ];
+}
+
+function updateFlow() {
+  const idx = select.value;
+  const s = idx !== '' ? schools[parseInt(idx)] : null;
+  const steps = getFlowSteps(s);
+  const container = document.getElementById('flow-steps');
+
+  container.innerHTML = steps.map(step => `
+    <div class="flow-step">
+      <div class="flow-phase ${step.phase}">${step.phase === 'hook' ? 'HOOK' : step.phase === 'bridge' ? 'BRIDGE' : 'CLOSE'}</div>
+      <div class="flow-label">${step.label}</div>
+      <div class="flow-text">${step.text}</div>
+    </div>
+  `).join('');
+}
+
+// Initialize
+updateFlow();
 render();
 </script>
 </body>
