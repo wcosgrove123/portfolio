@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Fair Intel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --card: #181a22;
+      --border: #2a2d38;
+      --text: #e8e6e1;
+      --dim: #7a7d88;
+      --coral: #e67b5b;
+      --gold: #facc15;
+      --green: #4ade80;
+      --blue: #60a5fa;
+      --orange: #fb923c;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 16px;
+      padding-bottom: 80px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 11px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+    .tier-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 6px 0;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .school-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .school-meta {
+      font-size: 11px;
+      color: var(--dim);
+      margin-top: 2px;
+    }
+    .vacancy-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .card-body {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .card.open .card-body {
+      display: block;
+    }
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--coral);
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+    .opener {
+      font-style: italic;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      padding: 10px 12px;
+      background: rgba(230,123,91,0.06);
+      border-left: 2px solid var(--coral);
+      border-radius: 4px;
+    }
+    .hook {
+      font-size: 12px;
+      color: var(--gold);
+      line-height: 1.5;
+      padding: 8px 10px;
+      background: rgba(250,204,21,0.05);
+      border-radius: 6px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul li {
+      font-size: 12px;
+      color: var(--text);
+      padding: 4px 0;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--dim);
+    }
+    ul.questions li::before { background: var(--blue); }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .info-item {
+      font-size: 11px;
+      color: var(--dim);
+    }
+    .info-item span {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .programs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .programs .tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--dim);
+      border: 1px solid var(--border);
+    }
+    .back-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+<h1>School Intel</h1>
+<p class="subtitle">DCPS Hiring Fair &mdash; April 9, 2026</p>
+
+<div id="cards"></div>
+
+<button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&uarr;</button>
+
+<script>
+const schools = [
+  // TIER 1
+  {
+    school: "Dunbar HS", principal: "Latisha Coleman", ward: 5, enrollment: 892, grades: "9-12",
+    demographics: "88% Black, 11% Hispanic", atRisk: "71%", ell: "10%", hasPool: true,
+    tier: 1, vacancy: "1 SS Teacher (2026-27)", vacancyCount: 1,
+    hook: "You are already in this building coaching Masters Swimming at the Dunbar pool. No other candidate can say this.",
+    keyPrograms: ["NAF Engineering Academy", "Academy of Law & Public Policy", "IT Academy", "JROTC", "Dual Enrollment", "20+ Varsity Sports + Swimming"],
+    talkingPoints: [
+      "Already on campus coaching Masters Swimming",
+      "Afrofuturism + 'D.C. to the metaverse' = your AI in Civics curriculum",
+      "Law & Public Policy academy connects to your AP Gov experience",
+      "Two-for-one: SS teacher + swim coach"
+    ],
+    questionsToAsk: [
+      "Tell me about the SS department \u2014 how many teachers, what courses?",
+      "Is there a possibility of coaching the school swim team too?",
+      "What\u2019s the next step after today?"
+    ],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I sent you an email a few weeks ago. I actually coach Masters Swimming at your pool already, and I'd love to teach here too."
+  },
+  {
+    school: "MacArthur HS", principal: "Dr. Harold McCray", ward: 3, enrollment: 390, grades: "9-12",
+    demographics: "59% Black, 17% Hispanic, 17% White", atRisk: "39%", ell: "9%", hasPool: false,
+    tier: 1, vacancy: "1 SS Teacher (2026-27)", vacancyCount: 1,
+    hook: "Opened 2023 \u2014 newest DCPS high school. Still building identity. Smallest HS enrollment. Most diverse student body of your targets.",
+    keyPrograms: ["Pre-AP / AP / Honors", "NAF CS + Engineering + Finance", "Aerospace Engineering", "JROTC \u2014 Army", "Digital Art & Music", "Chess, Spanish, Italian"],
+    talkingPoints: [
+      "Excited about shaping a new school's culture in the founding years",
+      "Most diverse student body (59/17/17) \u2014 your teaching naturally serves diverse learners",
+      "STEM emphasis + your AI in Civics = SS that connects to their tech identity",
+      "390 students = tight community, outsized teacher impact"
+    ],
+    questionsToAsk: [
+      "What's the vision for the SS department as you grow?",
+      "What kind of teacher thrives here in the early years?",
+      "Is there a next step I can take after today?"
+    ],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I emailed you recently about the SS position. I wanted to introduce myself in person."
+  },
+  {
+    school: "Columbia Heights EC (CHEC)", principal: "Maria Tukeva", ward: 1, enrollment: 1563, grades: "6-12",
+    demographics: "Large Hispanic/Latino population, diverse", atRisk: "High", ell: "Very high", hasPool: false,
+    tier: 1, vacancy: "2 SS Teachers (2026-27)", vacancyCount: 2,
+    hook: "Two openings. Biggest school at the fair. Huge ELL population where your Spanish and Armenian school background matter.",
+    keyPrograms: ["6th-12th comprehensive campus", "Largest DCPS campus"],
+    talkingPoints: [
+      "Drawn to schools where students bring a range of backgrounds into the classroom",
+      "Spanish language ability is an asset here",
+      "Differentiated assessment (essay, podcast, visual map) serves diverse learners",
+      "D.C. resident, flexible on 6-12 placement"
+    ],
+    questionsToAsk: [
+      "Is the SS department one team across 6-12 or split by division?",
+      "What's the biggest challenge and strength of teaching here?",
+      "What's the next step?"
+    ],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies, 7-12. I see CHEC has two SS openings and I'm very interested."
+  },
+  {
+    school: "Garnett-Patterson STAY HS", principal: "Dewayne Little", ward: 1, enrollment: 672, grades: "9-12 + Adult",
+    demographics: "Majority Black", atRisk: "Very high", ell: "Moderate", hasPool: false,
+    tier: 1, vacancy: "2 SS Teachers (2026-27)", vacancyCount: 2,
+    hook: "Two openings. Competency-based = your assessment philosophy. Relationship-first teaching matters most here.",
+    keyPrograms: ["Opportunity Academy (alternative diploma)", "Competency-based education", "Virtual Innovation Pathway (VIP)", "Adult education / NEDP", "Wraparound support services"],
+    talkingPoints: [
+      "Best teaching starts with knowing students as whole people",
+      "Competency-based = multiple ways to demonstrate understanding (your approach)",
+      "Swim Safe: taught fearful kids to trust the water \u2014 same patience applies",
+      "Adult learners in the building = unique, meaningful environment"
+    ],
+    questionsToAsk: [
+      "What does SS look like in a competency-based model?",
+      "What kind of teacher thrives here?",
+      "What support exists for students who've had negative school experiences?"
+    ],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies. I'm genuinely interested in what competency-based learning looks like for history."
+  },
+  // TIER 1.5 (Middle Schools with vacancies)
+  {
+    school: "Deal Middle School", principal: "Diedre Neal", ward: 3, enrollment: 1462, grades: "6-8",
+    tier: 1.5, vacancy: "1 SS Teacher (2026-27)", vacancyCount: 1,
+    hook: "Biggest MS in DCPS. Your AP rigor translates to challenging middle schoolers. MacArthur feeder.",
+    keyPrograms: ["Biggest MS in DCPS", "MacArthur feeder"],
+    talkingPoints: [
+      "Student taught AP at BCC \u2014 knows how to challenge high achievers",
+      "Gamified simulation would be incredible with middle schoolers",
+      "D.C. resident, M.A. in Curriculum Design"
+    ],
+    questionsToAsk: ["What grades would this position cover?", "What does the SS department look like?", "What's the next step?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies, 7-12. I see Deal has an opening."
+  },
+  {
+    school: "Johnson Middle School", principal: "Marian Wilkins", ward: 8, enrollment: 307, grades: "6-8",
+    tier: 1.5, vacancy: "2 SS Teachers (2026-27)", vacancyCount: 2,
+    hook: "Two openings. Small Ward 8 school. High-need. You'll know every kid.",
+    keyPrograms: [],
+    talkingPoints: [
+      "Coached 500+ kids through Swim Safe \u2014 comfortable with young adolescents",
+      "307 students = real community, real relationships"
+    ],
+    questionsToAsk: ["What courses would these positions cover?", "What does the school community look like?", "What's the next step?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I see Johnson has two SS openings and I'd love to learn more."
+  },
+  {
+    school: "Ida B. Wells Middle School", principal: "William Lyles", ward: 4, enrollment: 521, grades: "6-8",
+    tier: 1.5, vacancy: "1 SS Teacher (2026-27)", vacancyCount: 1,
+    hook: "Roosevelt feeder school. Builds a pipeline if you end up at Roosevelt.",
+    keyPrograms: ["Roosevelt feeder school"],
+    talkingPoints: [
+      "Ida B. Wells feeds into Roosevelt \u2014 connection point",
+      "Diverse Ward 4 neighborhood (Petworth/Brightwood)",
+      "Gamified simulation works great with middle schoolers"
+    ],
+    questionsToAsk: ["What SS courses does this cover?", "How does the department connect with feeder high schools?", "What's the next step?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies. I see there's an opening here."
+  },
+  // TIER 2 (at fair, no vacancy)
+  {
+    school: "Ballou HS", principal: "William Haith", ward: 8, enrollment: 597, grades: "9-12",
+    tier: 2, vacancy: "No SS vacancy listed", vacancyCount: 0,
+    keyPrograms: ["Redesign School", "AP, Dual College Enrollment", "Restorative Justice"],
+    talkingPoints: ["Redesign school \u2014 community rebuilt the program"],
+    questionsToAsk: ["Any SS positions coming for next year?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies. Any SS positions coming?"
+  },
+  {
+    school: "Cardozo Education Campus", principal: "Arthur Mola", ward: 1, enrollment: 710, grades: "7-12",
+    tier: 2, vacancy: "No SS vacancy listed", vacancyCount: 0,
+    keyPrograms: ["International Academy (ELL-focused)", "NAF TransSTEM Academy"],
+    talkingPoints: ["SS department within the International Academy"],
+    questionsToAsk: ["Any openings in the International Academy SS department?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies. Any openings in the International Academy SS department?"
+  },
+  {
+    school: "Hardy MS", principal: "Maurine Westover", ward: 2, enrollment: 631, grades: "6-8",
+    tier: 2, vacancy: "No SS vacancy listed", vacancyCount: 0,
+    keyPrograms: ["MacArthur feeder"],
+    questionsToAsk: ["Any SS openings expected?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 any SS openings expected for next year?"
+  },
+  {
+    school: "MacFarland MS", principal: "Lucas Cooke", ward: 4, enrollment: 486, grades: "6-8",
+    tier: 2, vacancy: "No SS vacancy listed", vacancyCount: 0,
+    keyPrograms: ["Roosevelt feeder"],
+    questionsToAsk: ["Any SS openings?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 any SS openings for next year?"
+  },
+  {
+    school: "Sousa MS", principal: "Brittany Green", ward: 7, enrollment: 223, grades: "6-8",
+    tier: 2, vacancy: "No SS vacancy listed", vacancyCount: 0,
+    questionsToAsk: ["Any SS openings?"],
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 any SS openings for next year?"
+  },
+];
+
+const tierConfig = {
+  1:   { label: 'PRIORITY \u2014 SS VACANCY AT FAIR', color: '#e67b5b' },
+  1.5: { label: 'MIDDLE SCHOOLS \u2014 VACANCY AT FAIR', color: '#fb923c' },
+  2:   { label: 'AT FAIR \u2014 NO SS VACANCY (QUICK INTEL)', color: '#facc15' },
+};
+
+function render() {
+  const container = document.getElementById('cards');
+  let html = '';
+
+  [1, 1.5, 2].forEach(tier => {
+    const tierSchools = schools.filter(s => s.tier === tier);
+    if (!tierSchools.length) return;
+    const cfg = tierConfig[tier];
+    html += `<div class="tier-label" style="color:${cfg.color}">${cfg.label}</div>`;
+
+    tierSchools.forEach((s, i) => {
+      const globalIdx = schools.indexOf(s);
+      const badgeColor = s.vacancyCount > 0 ? 'rgba(74,222,128,0.15)' : 'rgba(250,204,21,0.1)';
+      const badgeText = s.vacancyCount > 0 ? `${s.vacancyCount} opening${s.vacancyCount > 1 ? 's' : ''}` : 'No vacancy';
+      const badgeTextColor = s.vacancyCount > 0 ? '#4ade80' : '#facc15';
+
+      html += `<div class="card" onclick="toggle(this)" id="card-${globalIdx}">
+        <div class="card-header">
+          <div>
+            <div class="school-name">${s.school}</div>
+            <div class="school-meta">${s.principal} &bull; Ward ${s.ward}${s.enrollment ? ' &bull; ' + s.enrollment + ' students' : ''}</div>
+          </div>
+          <div class="vacancy-badge" style="background:${badgeColor};color:${badgeText}">${badgeText}</div>
+        </div>
+        <div class="card-body">
+          ${s.openingLine ? `<div class="section-label">Opening Line</div><div class="opener">"${s.openingLine.replace(/^"/, '').replace(/"$/, '')}"</div>` : ''}
+          ${s.hook ? `<div class="section-label">Your Edge</div><div class="hook">${s.hook}</div>` : ''}
+          ${s.talkingPoints?.length ? `<div class="section-label">Talking Points</div><ul>${s.talkingPoints.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
+          ${s.questionsToAsk?.length ? `<div class="section-label">Questions to Ask</div><ul class="questions">${s.questionsToAsk.map(q => `<li>${q}</li>`).join('')}</ul>` : ''}
+          ${s.keyPrograms?.length ? `<div class="section-label">Key Programs</div><div class="programs">${s.keyPrograms.map(p => `<span class="tag">${p}</span>`).join('')}</div>` : ''}
+          ${s.demographics || s.atRisk || s.ell ? `
+            <div class="info-grid">
+              ${s.demographics ? `<div class="info-item"><span>${s.demographics}</span></div>` : ''}
+              ${s.atRisk ? `<div class="info-item">At-risk: <span>${s.atRisk}</span></div>` : ''}
+              ${s.ell ? `<div class="info-item">ELL: <span>${s.ell}</span></div>` : ''}
+              ${s.hasPool ? `<div class="info-item"><span>Has pool</span></div>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      </div>`;
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+function toggle(el) {
+  el.classList.toggle('open');
+}
+
+render();
+</script>
+</body>
+</html>
