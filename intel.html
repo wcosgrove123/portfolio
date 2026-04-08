@@ -296,6 +296,68 @@
     }
     .view { display: none; }
     .view.active { display: block; }
+
+    /* School profile */
+    .profile {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .profile-block {
+      margin-bottom: 14px;
+    }
+    .profile-block h4 {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #5abfb7;
+      margin-bottom: 6px;
+    }
+    .profile-block p {
+      font-size: 12px;
+      color: rgba(232,230,225,0.8);
+      line-height: 1.6;
+    }
+
+    /* Questions section */
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .q-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .q-why {
+      font-size: 11px;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+    .q-category {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #5abfb7;
+    }
+    .q-category::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
   </style>
 </head>
 <body>
@@ -304,8 +366,9 @@
 <p class="subtitle">DCPS Hiring Fair &mdash; April 9, 2026</p>
 
 <div class="tab-bar">
-  <button class="tab active" onclick="switchTab('flow')">Conversation Flow</button>
-  <button class="tab" onclick="switchTab('schools')">School Cards</button>
+  <button class="tab active" onclick="switchTab('flow')">Flow</button>
+  <button class="tab" onclick="switchTab('schools')">Schools</button>
+  <button class="tab" onclick="switchTab('questions')">Questions</button>
 </div>
 
 <div id="flow-view" class="view active">
@@ -319,6 +382,10 @@
 
 <div id="schools-view" class="view">
   <div id="cards"></div>
+</div>
+
+<div id="questions-view" class="view">
+  <div id="questions"></div>
 </div>
 
 <button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&uarr;</button>
@@ -343,7 +410,14 @@ const schools = [
       "Is there a possibility of coaching the school swim team too?",
       "What\u2019s the next step after today?"
     ],
-    openingLine: "Hi, I'm Wil Cosgrove \u2014 I sent you an email a few weeks ago. I actually coach Masters Swimming at your pool already, and I'd love to teach here too."
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I sent you an email a few weeks ago. I actually coach Masters Swimming at your pool already, and I'd love to teach here too.",
+    profile: {
+      mission: "\"Our mission is to provide an all-inclusive instructional program for students that fosters maximum academic achievement, enabling them to enjoy lifelong learning while becoming productive citizens.\" The school uses an Afrofuturistic framework through the DC+XQ redesign, where students study the past through a Black and brown cultural lens to imagine and reconstruct the future.",
+      ssInfo: "AP African American Studies, AP Psychology, and other AP social studies courses. The Carter G. Woodson Black Studies Academy and the Eleanor Holmes Norton Academy for Law and Public Policy are both deeply social-studies-adjacent. The Afrofuturistic curriculum means SS instruction is framed around examining the past through a racial equity lens.",
+      curriculum: "DC+XQ Redesign Model (Afrofuturism-centered, experiential, project-based). NAF framework for career academies. 10 AP courses offered, 33% AP participation. \"City as Classroom\" experiential learning days use DC as a resource. VR/AR integrated into instruction.",
+      culture: "Core values are the 3 Ps: Prestige, Purpose, Promise. Mantra: \"Keep Pluggin' Away.\" Students are called \"Dunbar Scholars.\" Founded in 1870 as the first public high school for Black students in America. Carter G. Woodson (Father of Black History Month) was on faculty. Eleanor Holmes Norton is an alum.",
+      principalNote: "New for SY 2025-26. 25+ years in DC education. Previously principal of Johnson MS (99th percentile on Panorama survey). Led project-based learning and school redesign at Anacostia HS. Currently pursuing doctorate at Howard. Strong track record closing achievement gaps."
+    }
   },
   {
     school: "MacArthur HS", principal: "Dr. Harold McCray", ward: 3, enrollment: 390, grades: "9-12",
@@ -362,14 +436,21 @@ const schools = [
       "What kind of teacher thrives here in the early years?",
       "Is there a next step I can take after today?"
     ],
-    openingLine: "Hi, I'm Wil Cosgrove \u2014 I emailed you recently about the SS position. I wanted to introduce myself in person."
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I emailed you recently about the SS position. I wanted to introduce myself in person.",
+    profile: {
+      mission: "\"MacArthur High School cultivates the next generation of global leaders who thrive in a safe and supportive learning environment that is conducive to rigorous academics and a well-rounded educational experience.\" Motto: \"Believe. Belong. Become.\" Being renamed to John R. Thompson Jr. High School (after the Georgetown basketball legend).",
+      ssInfo: "5 current SS teachers. 4 AP social studies courses: AP US History, AP World History: Modern, AP Human Geography, AP US Government. Also Pre-AP World History (9th grade), US History, US Government, DC History. Strong department for a school only 3 years old.",
+      curriculum: "ALL courses are Pre-AP, Honors, or AP. No standard track exists. This is a deliberate equity-driven decision. Pre-AP courses in 9th-10th are back-mapped from AP to build skills. AP Base Camp summer prep program in August. PLTW for engineering/CS. NAF framework for career academies.",
+      culture: "First new DCPS high school in 50+ years (opened Aug 2023). Formerly Georgetown Day School building. Still building traditions and identity. The community chose the new name (Thompson) through a student/parent process. Dr. McCray's standard: \"Excellence is the Standard, and Achievement is our Only Option!\" Mammoths mascot.",
+      principalNote: "Founding principal since 2023. Ed.D. from Walden, M.A. from Bowie State, B.A. from Delaware State. 18+ years in education. Started as a math teacher. Previously maintained 90%+ 9th grade retention at a 1,800-student HS. Oversaw the only Aerospace Engineering program in his prior district. From Philly originally."
+    }
   },
   {
     school: "Columbia Heights EC (CHEC)", principal: "Maria Tukeva", ward: 1, enrollment: 1563, grades: "6-12",
-    demographics: "Large Hispanic/Latino population, diverse", atRisk: "High", ell: "Very high", hasPool: false,
+    demographics: "68% Hispanic, 29% Black", atRisk: "High", ell: "Very high", hasPool: false,
     tier: 1, vacancy: "2 SS Teachers (2026-27)", vacancyCount: 2,
     hook: "Two openings. Biggest school at the fair. Huge ELL population where your Spanish and Armenian school background matter.",
-    keyPrograms: ["6th-12th comprehensive campus", "Largest DCPS campus"],
+    keyPrograms: ["6th-12th comprehensive campus", "Largest DCPS campus", "Dual Language (Spanish)", "8 NAF CTE Academies", "XQ Redesign Partner"],
     talkingPoints: [
       "Drawn to schools where students bring a range of backgrounds into the classroom",
       "Spanish language ability is an asset here",
@@ -381,11 +462,18 @@ const schools = [
       "What's the biggest challenge and strength of teaching here?",
       "What's the next step?"
     ],
-    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies, 7-12. I see CHEC has two SS openings and I'm very interested."
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies, 7-12. I see CHEC has two SS openings and I'm very interested.",
+    profile: {
+      mission: "School creed: \"If it is to be, it is up to me. I am powerful beyond measure. I manifest pride, poise, perseverance and the relentless pursuit of excellence for myself, my family, my community and my world.\" Globally themed bilingual campus preparing students for college and careers. Students from 50+ countries; instruction available in 14 languages.",
+      ssInfo: "SS is taught through global themes integrating culture and social justice. AP World History and AP US History offered. College Board AP School Honor Roll (2024-25) for their \"AP for All\" model where AP is open to every student, not pre-selected. Middle school SS (6-8) is inquiry-based. Each grade explores a unifying global theme.",
+      curriculum: "Globally themed curriculum with a social justice lens. The only Spanish dual-immersion high school in DCPS. XQ Super School redesign partner (2nd cohort, 2023). Project-based learning and portfolio assessment. Two HS career pathways: (1) Math, Science & Business, or (2) Multilingual Communication & the Arts. 8th graders can take HS courses for credit; 9th+ can take college courses.",
+      culture: "Student voice is huge here: 30% of scholars participate in adult decision-making spaces, co-design lessons, and present at national conferences (ASCD). Smaller learning communities within the large campus. Principal Maria Tukeva is DC Education Hall of Fame inductee and the longest-serving principal in modern DCPS history (30+ years). She founded the school from a 40-student dropout recovery program in 1979 and grew it to 1,500+.",
+      principalNote: "Maria Tukeva: DC Education Hall of Fame, DCPS Principal of the Year, 30+ years as school leader. Founded the Multicultural Career Intern Program in 1979 with 40 students. Built it into CHEC serving 1,563. Over 36 years, her programs served 28,000 youth with 90% graduation rates. Champion of immigrant and multilingual student education."
+    }
   },
   {
     school: "Garnett-Patterson STAY HS", principal: "Dewayne Little", ward: 1, enrollment: 672, grades: "9-12 + Adult",
-    demographics: "Majority Black", atRisk: "Very high", ell: "Moderate", hasPool: false,
+    demographics: "~60% Black, ~38% Hispanic", atRisk: "Very high", ell: "Moderate", hasPool: false,
     tier: 1, vacancy: "2 SS Teachers (2026-27)", vacancyCount: 2,
     hook: "Two openings. Competency-based = your assessment philosophy. Relationship-first teaching matters most here.",
     keyPrograms: ["Opportunity Academy (alternative diploma)", "Competency-based education", "Virtual Innovation Pathway (VIP)", "Adult education / NEDP", "Wraparound support services"],
@@ -400,7 +488,14 @@ const schools = [
       "What kind of teacher thrives here?",
       "What support exists for students who've had negative school experiences?"
     ],
-    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies. I'm genuinely interested in what competency-based learning looks like for history."
+    openingLine: "Hi, I'm Wil Cosgrove \u2014 I'm in the Recommended Pool for social studies. I'm genuinely interested in what competency-based learning looks like for history.",
+    profile: {
+      mission: "Vision: \"Every scholar, no matter their starting point, graduates with purpose, confidence, and the skills to lead in a changing world.\" Motto: \"The destination for education \u2014 find your way here!\" S.T.A.Y. = School To Aid Youth. Serves students 16+ who are 6+ credits behind. Also serves adult learners through NEDP (National External Diploma Program).",
+      ssInfo: "History is its own department (not merged into \"humanities\"). Courses aligned to DCPS graduation requirements (World History, US History, Government, DC History) but delivered through competency-based progression. This is NOT an AP school. Students demonstrate mastery of competencies rather than accumulating seat time. 8:1 student-teacher ratio.",
+      curriculum: "100% competency-based education. Students progress by demonstrating mastery, not seat time. GPS Virtual Innovation Pathway (VIP) combines competency-based ed with Ubuntu philosophy (\"I am because we are\"). 1:6 achievement coach-to-student ratio. 1:1 student technology. Personalized learning tailored to individual starting points.",
+      culture: "Seven core values: Wellness, Empathy, Student Voice, Empowerment, Respect, Vision, Equity. Ubuntu philosophy runs through the school. \"STAY READY\" framework. 89% average student satisfaction rate. Relocated to newly renovated building Aug 2023 (formerly Roosevelt STAY). Extended office hours until 6:30 PM for adult learners. 5 CTE pathways including Barbering, Cosmetology, AV/Media, Early Childhood Ed, and HVAC.",
+      principalNote: "Dr. DeWayne Little, Ed.D. from Marymount University. Started as a classroom teacher and media specialist in PG County. Assistant principal at Roosevelt STAY for 3 years, then principal since 2017. Led the school through its relocation and rebranding. Emphasizes Ubuntu philosophy and the seven core values."
+    }
   },
   // TIER 1.5 (Middle Schools with vacancies)
   {
@@ -524,6 +619,15 @@ function render() {
               ${s.hasPool ? `<div class="info-item"><span>Has pool</span></div>` : ''}
             </div>
           ` : ''}
+          ${s.profile ? `
+            <div class="profile">
+              <div class="profile-block"><h4>Mission & Identity</h4><p>${s.profile.mission}</p></div>
+              <div class="profile-block"><h4>Social Studies Program</h4><p>${s.profile.ssInfo}</p></div>
+              <div class="profile-block"><h4>Curriculum & Instruction</h4><p>${s.profile.curriculum}</p></div>
+              <div class="profile-block"><h4>School Culture</h4><p>${s.profile.culture}</p></div>
+              <div class="profile-block"><h4>About the Principal</h4><p>${s.profile.principalNote}</p></div>
+            </div>
+          ` : ''}
         </div>
       </div>`;
     });
@@ -537,13 +641,56 @@ function toggle(el) {
 }
 
 // ── TAB SWITCHING ──
+const tabMap = ['flow', 'schools', 'questions'];
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', (tab === 'flow' && i === 0) || (tab === 'schools' && i === 1));
+    t.classList.toggle('active', tabMap[i] === tab);
   });
-  document.getElementById('flow-view').classList.toggle('active', tab === 'flow');
-  document.getElementById('schools-view').classList.toggle('active', tab === 'schools');
+  tabMap.forEach(t => {
+    document.getElementById(t + '-view').classList.toggle('active', t === tab);
+  });
   window.scrollTo({ top: 0 });
+}
+
+// ── QUESTIONS TO REHEARSE ──
+const questions = [
+  { cat: "About Their SS Program", items: [
+    { q: "What does your social studies program look like right now?", why: "Open-ended, lets them talk. Shows genuine interest." },
+    { q: "What courses would this position cover?", why: "Practical. You need to know if it's US History, World, Gov, etc." },
+    { q: "What does your department value most in how social studies is taught here?", why: "Gets at their philosophy. Tells you if you're a fit." },
+    { q: "Is there a curriculum or framework the SS department follows, or do teachers have room to design their own units?", why: "Tells you how much creative freedom you'd have." },
+  ]},
+  { cat: "About Teaching There", items: [
+    { q: "What kind of teacher tends to do really well here?", why: "Reveals culture. Their answer tells you what they prioritize." },
+    { q: "What's the biggest challenge your teachers face, and what support do they get?", why: "Shows maturity. You're asking about the real job, not just the brochure." },
+    { q: "Are there interdisciplinary efforts here, like connecting social studies with other departments or programs?", why: "Signals you think beyond your silo. Connects to your curriculum design background." },
+    { q: "How does the school support new teachers in their first year?", why: "Practical and smart. Shows you're thinking about thriving long-term." },
+  ]},
+  { cat: "About the School", items: [
+    { q: "What are you most proud of about this school right now?", why: "People love talking about what's going well. Builds rapport." },
+    { q: "What's the relationship like between teachers and the community here?", why: "You're a D.C. resident who coaches and volunteers. This is your strength." },
+    { q: "Is there anything happening next year that you're excited about?", why: "Forward-looking. Shows you're thinking about being part of the future." },
+  ]},
+  { cat: "Closing / Next Steps", items: [
+    { q: "Is there a next step I can take after today?", why: "Direct. Closes the conversation with intent." },
+    { q: "Could I come visit the school and see a class in action?", why: "Shows commitment. Most candidates won't ask this." },
+    { q: "What's the best way to follow up with you?", why: "Gets their contact info. Essential for the thank-you email." },
+  ]},
+];
+
+function renderQuestions() {
+  const container = document.getElementById('questions');
+  let html = '';
+  questions.forEach(section => {
+    html += `<div class="q-category">${section.cat}</div>`;
+    section.items.forEach(item => {
+      html += `<div class="q-card">
+        <div class="q-text">"${item.q}"</div>
+        <div class="q-why">${item.why}</div>
+      </div>`;
+    });
+  });
+  container.innerHTML = html;
 }
 
 // ── FLOW MAP ──
@@ -629,6 +776,7 @@ function updateFlow() {
 // Initialize
 updateFlow();
 render();
+renderQuestions();
 </script>
 </body>
 </html>
