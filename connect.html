@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wil Cosgrove | Educator</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23b8942e'/%3E%3Ctext x='32' y='44' font-family='Inter,Arial,sans-serif' font-size='30' font-weight='700' text-anchor='middle' fill='%231a1a1a'%3EWC%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23b8942e'/%3E%3Ctext x='32' y='44' font-family='Inter,Arial,sans-serif' font-size='30' font-weight='700' text-anchor='middle' fill='white'%3EWC%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
       height: 80px;
       border-radius: 50%;
       background: var(--accent);
-      color: #1a1a1a; /* Updated for accessibility/contrast */
+      color: #fff;
       font-size: 32px;
       font-weight: 700;
       display: flex;
@@ -74,19 +74,18 @@
 
     /* Bio */
     .bio {
-      font-size: 16px; /* Increased for modern readability */
+      font-size: 15px;
       color: var(--text);
       line-height: 1.7;
       margin-bottom: 28px;
       max-width: 60ch;
-      /* Removed horizontal padding for flush left alignment */
     }
 
     /* Quick Facts */
     .facts {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px; /* Increased breathing room */
+      gap: 16px;
       margin-bottom: 28px;
     }
 
@@ -95,20 +94,19 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 12px 14px;
-      transition: all 0.2s ease; /* Added transition */
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Added hover state for visual polish */
     .fact:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
     .fact-label {
-      font-size: 12px; /* Increased slightly */
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.8px; /* Slightly wider */
+      letter-spacing: 0.5px;
       color: var(--muted);
       font-weight: 600;
       margin-bottom: 4px;
@@ -128,7 +126,6 @@
       color: var(--muted);
       font-weight: 600;
       margin-bottom: 12px;
-      /* Removed left padding for flush alignment */
     }
 
     /* Action buttons */
@@ -156,7 +153,7 @@
 
     .btn-primary {
       background: var(--accent);
-      color: #1a1a1a; /* Updated for accessibility/contrast */
+      color: #fff;
     }
 
     .btn-primary:hover, .btn-primary:active {
@@ -195,7 +192,7 @@
     }
 
     .btn-primary .btn-arrow {
-      color: rgba(26,26,26,0.7); /* Updated for accessibility/contrast */
+      color: rgba(255,255,255,0.7);
     }
 
     /* Centered button (no trailing arrow) */
@@ -316,14 +313,14 @@
       }
       
       .col-left > *, .col-right > * { margin-bottom: 0 !important; }
-      
+
+      /* Header keeps its centered layout (avatar + name + tagline) on desktop too,
+         sitting above the bio and facts. Drop divider since flex gap separates them. */
       .header {
-        text-align: left;
         padding-bottom: 0;
         border-bottom: none;
       }
-      .header .avatar { margin-left: 0; }
-      
+
       #save-btn { margin-bottom: 0; }
       
       .footer {
