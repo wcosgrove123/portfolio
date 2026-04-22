@@ -78,7 +78,6 @@
       color: var(--text);
       line-height: 1.7;
       margin-bottom: 28px;
-      padding: 0 4px;
       max-width: 60ch;
     }
 
@@ -86,7 +85,7 @@
     .facts {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 16px;
       margin-bottom: 28px;
     }
 
@@ -95,6 +94,13 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 12px 14px;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .fact:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
     .fact-label {
@@ -120,7 +126,6 @@
       color: var(--muted);
       font-weight: 600;
       margin-bottom: 12px;
-      padding-left: 4px;
     }
 
     /* Action buttons */
@@ -294,6 +299,14 @@
         flex-direction: column;
         gap: 24px;
         min-width: 0;
+      }
+      /* Anchor the right column as a distinct "Action Card" on desktop */
+      .col-right {
+        background: #ffffff;
+        padding: 32px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
       }
       /* Reset the per-element bottom margins so the flex gap controls spacing */
       .col-left > *, .col-right > * { margin-bottom: 0 !important; }
