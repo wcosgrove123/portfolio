@@ -20,11 +20,19 @@
       --accent-hover: #a07f22;
       --border: #e8e5e0;
       --radius: 12px;
+      --radius-lg: 20px;
+      --shadow-card:
+        0 1px 2px rgba(26, 17, 0, 0.03),
+        0 6px 16px rgba(26, 17, 0, 0.04),
+        0 24px 48px -16px rgba(26, 17, 0, 0.08);
     }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(ellipse 60% 50% at 8% 5%, rgba(184,148,46,0.10), transparent 60%),
+        radial-gradient(ellipse 55% 45% at 95% 95%, rgba(184,148,46,0.07), transparent 60%),
+        var(--bg);
       color: var(--text);
       line-height: 1.6;
       min-height: 100dvh;
@@ -33,6 +41,7 @@
 
     .container {
       width: 100%;
+      max-width: 1120px;
       margin: 0 auto;
       padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 56px) clamp(32px, 5vw, 64px);
     }
@@ -46,18 +55,21 @@
     }
 
     .avatar {
-      width: 80px;
-      height: 80px;
+      width: clamp(72px, 7vw, 92px);
+      height: clamp(72px, 7vw, 92px);
       border-radius: 50%;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
       color: #fff;
-      font-size: 32px;
+      font-size: clamp(28px, 3vw, 34px);
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
       letter-spacing: -1px;
+      box-shadow:
+        0 6px 18px rgba(184, 148, 46, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
     }
 
     .name {
@@ -327,45 +339,75 @@
 
     /* Desktop Layout */
     @media (min-width: 760px) {
-      .container {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: clamp(32px, 5vw, 80px);
-        align-items: center;
-      }
-      .col-left {
+      body {
         display: flex;
         flex-direction: column;
-        gap: 24px;
-        min-width: 0;
       }
+
+      .container {
+        margin: auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+          "left  right"
+          "foot  foot";
+        column-gap: clamp(20px, 3vw, 40px);
+        row-gap: clamp(12px, 1.6vh, 20px);
+        align-items: stretch;
+        padding: clamp(16px, 2.2vw, 28px);
+      }
+
+      .col-left,
       .col-right {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: clamp(14px, 1.8vh, 22px);
         min-width: 0;
-        /* Desktop Action Card Styling */
-        background: #ffffff;
-        padding: 32px;
-        border-radius: 16px;
+        background: linear-gradient(180deg, #ffffff 0%, #fdfcf8 100%);
+        padding: clamp(22px, 2.6vw, 34px);
+        border-radius: var(--radius-lg);
         border: 1px solid var(--border);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.02);
+        box-shadow: var(--shadow-card);
       }
-      
+
+      /* Push the save button to the bottom of the right card so the
+         card reads as grouped content on top, CTA anchored at bottom. */
+      #save-btn { margin-top: auto; }
+
+      .col-left { grid-area: left; }
+      .col-right { grid-area: right; }
+
       .col-left > *, .col-right > * { margin-bottom: 0 !important; }
 
-      /* Header keeps its centered layout (avatar + name + tagline) on desktop too,
-         sitting above the bio and facts. Drop divider since flex gap separates them. */
+      /* Header sits inside the left card — drop divider since flex gap separates items. */
       .header {
         padding-bottom: 0;
         border-bottom: none;
       }
 
+      /* Let the bio fill the card width; the card itself sets the max line length. */
+      .bio {
+        max-width: none;
+      }
+
+      /* Facts read as embedded tiles on the soft card background. */
+      .col-left .fact {
+        background: var(--bg);
+        box-shadow: none;
+      }
+
+      /* Section spacings inside the right card are handled by the flex gap. */
+      .actions,
+      .resume-section {
+        margin-bottom: 0;
+      }
+
       #save-btn { margin-bottom: 0; }
-      
+
       .footer {
-        grid-column: 1 / -1;
-        margin-top: 16px;
+        grid-area: foot;
+        padding-top: 0;
+        border-top: none;
       }
     }
   </style>
@@ -395,7 +437,7 @@
         <div class="fact-value">M.A. Curriculum<br>GWU (Spring '26)</div>
       </div>
       <div class="fact">
-        <div class="fact-label">Experience</div>
+        <div class="fact-label">Teaching Experience</div>
         <div class="fact-value">AP US History<br>AP Government</div>
       </div>
       <div class="fact">
@@ -414,6 +456,13 @@
             <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
           </span>
           <span class="btn-label">Send Me an Email</span>
+          <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+        </a>
+        <a href="tel:+12155002639" class="btn btn-muted">
+          <span class="btn-icon">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.9.72 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0122 16.92z"/></svg>
+          </span>
+          <span class="btn-label">(215) 500-2639</span>
           <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
         </a>
       </div>
@@ -459,21 +508,37 @@
   </div>
 
   <script>
-    document.getElementById('save-btn').addEventListener('click', () => {
+    (function () {
+      const btn = document.getElementById('save-btn');
+      const label = document.getElementById('save-label');
       const url = window.location.href;
       const title = 'Wil Cosgrove | Educator';
       const text = 'Wil Cosgrove - Educator & Curriculum Designer, Washington DC';
+      const isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+      const bookmarkHint = 'Press ' + (isMac ? '\u2318' : 'Ctrl') + '+D to bookmark';
 
-      if (navigator.share) {
-        navigator.share({ title, text, url }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(url).then(() => {
-          const label = document.getElementById('save-label');
-          label.textContent = 'Link Copied!';
-          setTimeout(() => { label.textContent = 'Save for Later'; }, 2000);
-        });
-      }
-    });
+      const flash = (msg, ms = 2400) => {
+        label.textContent = msg;
+        setTimeout(() => { label.textContent = 'Save for Later'; }, ms);
+      };
+
+      btn.addEventListener('click', async () => {
+        // Mobile / OS-level share sheet (includes "Add Bookmark" on iOS/Android)
+        if (navigator.share) {
+          try {
+            await navigator.share({ title, text, url });
+            return;
+          } catch (_) { /* user cancelled — fall through to copy */ }
+        }
+        // Desktop: copy link + prompt to bookmark
+        try {
+          await navigator.clipboard.writeText(url);
+          flash('Link copied \u2014 ' + bookmarkHint);
+        } catch (_) {
+          flash(bookmarkHint);
+        }
+      });
+    })();
   </script>
 </body>
 </html>
