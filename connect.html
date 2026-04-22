@@ -37,32 +37,6 @@
       padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 56px) clamp(32px, 5vw, 64px);
     }
 
-    /* Desktop: switch to a two-column layout so the page actually fills the window.
-       Left column holds identity + bio + facts; right column holds calls-to-action. */
-    @media (min-width: 760px) {
-      .container {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: clamp(32px, 5vw, 80px);
-        row-gap: 24px;
-        align-items: start;
-        grid-template-areas:
-          "header  contact"
-          "bio     contact"
-          "facts   documents"
-          "facts   save"
-          "footer  footer";
-      }
-      .header     { grid-area: header; text-align: left; padding-bottom: 0; border-bottom: none; margin-bottom: 0; }
-      .header .avatar { margin-left: 0; }
-      .bio        { grid-area: bio; margin-bottom: 0; }
-      .facts      { grid-area: facts; align-self: start; margin-bottom: 0; }
-      .contact    { grid-area: contact; }
-      .documents  { grid-area: documents; }
-      #save-btn   { grid-area: save; margin-bottom: 0; }
-      .footer     { grid-area: footer; margin-top: 16px; }
-    }
-
     /* Header */
     .header {
       text-align: center;
@@ -305,10 +279,45 @@
 
     /* SVG icons: only fill icons that don't explicitly opt out via fill="none" */
     svg:not([fill="none"]) { fill: currentColor; }
+
+    /* Desktop: two independent stacks side-by-side so each column flows on its own.
+       Wrappers (.col-left, .col-right) are inert on mobile and only become flex on desktop. */
+    @media (min-width: 760px) {
+      .container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: clamp(32px, 5vw, 80px);
+        align-items: start;
+      }
+      .col-left, .col-right {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        min-width: 0;
+      }
+      /* Reset the per-element bottom margins so the flex gap controls spacing */
+      .col-left > *, .col-right > * { margin-bottom: 0 !important; }
+      /* Header on desktop: avatar + text aligned to the start of the left column */
+      .header {
+        text-align: left;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .header .avatar { margin-left: 0; }
+      /* Save for Later joins the right stack — drop its full-width inline margin */
+      #save-btn { margin-bottom: 0; }
+      /* Footer spans both columns */
+      .footer {
+        grid-column: 1 / -1;
+        margin-top: 16px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
+
+    <div class="col-left">
 
     <!-- Header -->
     <div class="header">
@@ -341,6 +350,10 @@
         <div class="fact-value">Swim Coach<br>D1 Athlete (AU)</div>
       </div>
     </div>
+
+    </div><!-- /.col-left -->
+
+    <div class="col-right">
 
     <!-- Contact Actions -->
     <div class="contact">
@@ -386,6 +399,8 @@
       </span>
       <span class="btn-label" id="save-label">Save for Later</span>
     </button>
+
+    </div><!-- /.col-right -->
 
     <!-- Footer / View More -->
     <div class="footer">
