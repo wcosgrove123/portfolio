@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wil Cosgrove | Educator</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23b8942e'/%3E%3Ctext x='32' y='44' font-family='Inter,Arial,sans-serif' font-size='30' font-weight='700' text-anchor='middle' fill='white'%3EWC%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,9 +32,35 @@
     }
 
     .container {
-      max-width: 480px;
+      width: 100%;
       margin: 0 auto;
-      padding: 24px 20px 40px;
+      padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 56px) clamp(32px, 5vw, 64px);
+    }
+
+    /* Desktop: switch to a two-column layout so the page actually fills the window.
+       Left column holds identity + bio + facts; right column holds calls-to-action. */
+    @media (min-width: 760px) {
+      .container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: clamp(32px, 5vw, 80px);
+        row-gap: 24px;
+        align-items: start;
+        grid-template-areas:
+          "header  contact"
+          "bio     contact"
+          "facts   documents"
+          "facts   save"
+          "footer  footer";
+      }
+      .header     { grid-area: header; text-align: left; padding-bottom: 0; border-bottom: none; margin-bottom: 0; }
+      .header .avatar { margin-left: 0; }
+      .bio        { grid-area: bio; margin-bottom: 0; }
+      .facts      { grid-area: facts; align-self: start; margin-bottom: 0; }
+      .contact    { grid-area: contact; }
+      .documents  { grid-area: documents; }
+      #save-btn   { grid-area: save; margin-bottom: 0; }
+      .footer     { grid-area: footer; margin-top: 16px; }
     }
 
     /* Header */
@@ -78,6 +105,7 @@
       line-height: 1.7;
       margin-bottom: 28px;
       padding: 0 4px;
+      max-width: 60ch;
     }
 
     /* Quick Facts */
@@ -315,35 +343,39 @@
     </div>
 
     <!-- Contact Actions -->
-    <p class="section-title">Get in Touch</p>
-    <div class="actions">
-      <a href="mailto:wil.cosgrove@gmail.com?subject=Connecting%20from%20the%20Hiring%20Fair" class="btn btn-primary">
-        <span class="btn-icon">
-          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-        </span>
-        <span class="btn-label">Send Me an Email</span>
-        <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
-      </a>
+    <div class="contact">
+      <p class="section-title">Get in Touch</p>
+      <div class="actions">
+        <a href="mailto:wil.cosgrove@gmail.com?subject=Connecting%20from%20the%20Hiring%20Fair" class="btn btn-primary">
+          <span class="btn-icon">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+          </span>
+          <span class="btn-label">Send Me an Email</span>
+          <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+        </a>
+      </div>
     </div>
 
     <!-- Resumes -->
-    <p class="section-title">Documents</p>
-    <div class="resume-section">
-      <div class="resume-options">
-        <a href="docs/k12/Cosgrove_Resume_K12.pdf" target="_blank" rel="noopener" class="resume-link">
-          <span class="btn-icon">
-            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </span>
-          Resume
-          <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
-        </a>
-        <a href="docs/k12/Cosgrove_CoverLetter_K12.pdf" target="_blank" rel="noopener" class="resume-link">
-          <span class="btn-icon">
-            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </span>
-          Cover Letter
-          <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
-        </a>
+    <div class="documents">
+      <p class="section-title">Documents</p>
+      <div class="resume-section">
+        <div class="resume-options">
+          <a href="docs/k12/Cosgrove_Resume_K12.pdf" target="_blank" rel="noopener" class="resume-link">
+            <span class="btn-icon">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </span>
+            Resume
+            <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+          </a>
+          <a href="docs/k12/Cosgrove_CoverLetter_K12.pdf" target="_blank" rel="noopener" class="resume-link">
+            <span class="btn-icon">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </span>
+            Cover Letter
+            <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+          </a>
+        </div>
       </div>
     </div>
 
