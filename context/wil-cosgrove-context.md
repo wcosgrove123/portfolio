@@ -6,7 +6,7 @@
 
 ## Identity
 
-**Name:** William J. Cosgrove (goes by Wil)
+**Name:** Wil Cosgrove (legal name William J. Cosgrove)
 **Location:** Washington, DC
 **Email:** wil.cosgrove@gmail.com
 **Phone:** (215) 500-2639

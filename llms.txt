@@ -31,6 +31,7 @@ Wil is seeking a full-time role in K-12 social studies teaching, curriculum desi
 - /api/resume.json — JSON Resume standard format
 - /context/wil-cosgrove-context.md — Comprehensive context bundle (full profile in prose)
 - /sitemap.xml — Site map for crawling
+- /images/og-card.png — Social preview card
 
 ## Site Pages
 
