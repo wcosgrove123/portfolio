@@ -8,6 +8,8 @@
 
 **Name:** Wil Cosgrove (legal name William J. Cosgrove)
 **Location:** Washington, DC
+**LinkedIn:** https://www.linkedin.com/in/wil-cosgrove-1097391b1
+**GitHub:** https://github.com/wcosgrove123
 **Email:** wil.cosgrove@gmail.com
 **Phone:** (215) 500-2639
 
