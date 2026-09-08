@@ -13,9 +13,9 @@
 
 ## Professional Summary
 
-Wil Cosgrove is a curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. He holds an MA in Curriculum Design and Pedagogy from George Washington University (conferred May 2026) and a BA in History and Secondary Education from American University (May 2024).
+Wil Cosgrove is a curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. He holds an MA in Curriculum Design and Pedagogy from George Washington University (2026) and a BA in History and Secondary Education from American University (2024).
 
-From May 2024 to May 2026 he was a Project Director at Cue Insights, a healthcare market research firm, where he translated complex qualitative and quantitative data into strategic recommendations for healthcare and pharmaceutical clients. He has also designed and built company-wide data infrastructure and AI-driven analysis tools.
+At Cue Insights (2024-2026), a healthcare market research firm, he directed research projects, translating complex qualitative and quantitative data into strategic recommendations for healthcare and pharmaceutical clients. He has also designed and built company-wide data infrastructure and AI-driven analysis tools.
 
 Before his current role, he taught AP US History and AP Government at Bethesda-Chevy Chase High School in Montgomery County, MD. He co-founded Swim Safe, a community swim school that served over 500 families across seven years.
 
@@ -23,14 +23,14 @@ What connects each experience is a simple conviction: the way we teach matters a
 
 ## Education
 
-### George Washington University (M.A. conferred May 2026)
+### George Washington University (M.A. conferred 2026)
 - Master of Arts in Curriculum Design and Pedagogy
 - Concentration in Interdisciplinary Studies
 - GSEHD Merit Scholarship
 - Graduate Certificate in Curriculum Writing, Evaluation, and Development
 - Relevant Coursework: Development and Diversity (CPED 6608), Trends and Issues in Emerging Technologies (EDUC 6402), Advanced Instructional Design (EDUC 6427), Revolutionary America (HIST 6303)
 
-### American University (Graduated: May 2024)
+### American University (Graduated 2024)
 - Bachelor of Arts in History and Secondary Education (Dual Major)
 - Dean's Scholar (merit scholarship recipient)
 - Dean's List
@@ -67,7 +67,7 @@ Structural K-12 reform and school redesign; curriculum architecture and student 
 
 ## Professional Experience
 
-### Project Director, Cue Insights (May 2024 - May 2026)
+### Project Director, Cue Insights (2024 - 2026)
 - Synthesized complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients
 - Designed and built QGen, a company-wide project management and survey analysis platform (automates questionnaire construction, SPSS data validation, incidence rate calculation, data visualization, crosstab generation)
 - Developed AI-driven qualitative coding tools replacing manual coding processes
@@ -107,7 +107,7 @@ Structural K-12 reform and school redesign; curriculum architecture and student 
 
 ## Credentials and Certifications
 
-- DC Educator Credential (OSSE) — Active through May 26, 2029
+- DC Educator Credential (OSSE) — Active through 2029
 - EdTPA — Secondary Social Studies (Passed)
 - Praxis: Social Studies Content Knowledge (Passed)
 - Praxis: Principles of Learning and Teaching (Passed)
@@ -155,5 +155,5 @@ Wil has a developed and articulate perspective on AI in education, detailed in a
 
 ---
 
-*Last updated: March 2026*
+*Last updated: September 2026*
 *For structured data: see /api/resume.json and /api/profile.json*

@@ -7,16 +7,11 @@
     "email": "wil.cosgrove@gmail.com",
     "phone": "(215) 500-2639"
   },
-  "summary": "Curriculum designer, licensed social studies teacher, and learning systems thinker. M.A. in Curriculum Design and Pedagogy from George Washington University (conferred May 2026); the thesis argues K-12 education should be reorganized around metacognition rather than prescribed content. Active DC educator license, Social Studies grades 7-12.",
+  "summary": "Curriculum designer, licensed social studies teacher, and learning systems thinker. M.A. in Curriculum Design and Pedagogy from George Washington University (2026); the thesis argues K-12 education should be reorganized around metacognition rather than prescribed content. Active DC educator license, Social Studies grades 7-12.",
   "currentStatus": [
-    "M.A., Curriculum Design and Pedagogy, George Washington University (conferred May 2026)",
+    "M.A., Curriculum Design and Pedagogy, George Washington University (2026)",
     "Licensed social studies teacher (DC / OSSE, grades 7-12); seeking a classroom or curriculum design role",
     "Author, Same Means, New End: A Metacognitive End for American Curriculum"
-  ],
-  "previousRoles": [
-    "Project Director, Cue Insights (market research), May 2024 - May 2026",
-    "Student Teacher, AP U.S. History and AP Government, Bethesda-Chevy Chase High School (MCPS), 2024",
-    "Co-founder, community swim school (500+ learners over seven years)"
   ],
   "targetOpportunities": [
     "Curriculum Design",
@@ -96,7 +91,7 @@
     {
       "institution": "American University",
       "degree": "BA in History and Secondary Education (Dual Major)",
-      "graduationDate": "May 2024",
+      "graduationDate": "2024",
       "honors": [
         "Dean's Scholar (merit scholarship)",
         "Dean's List",
@@ -105,7 +100,7 @@
     }
   ],
   "credentials": [
-    "DC Educator Credential (OSSE) - Active through May 2029",
+    "DC Educator Credential (OSSE) - Active through 2029",
     "EdTPA - Secondary Social Studies",
     "Praxis: Social Studies Content Knowledge - Passed",
     "Praxis: Principles of Learning and Teaching - Passed"
@@ -156,7 +151,7 @@
     ]
   },
   "metadata": {
-    "lastUpdated": "2026-03-03",
+    "lastUpdated": "2026-09-08",
     "version": "1.0",
     "aiOptimized": true,
     "dataEndpoints": {
@@ -165,5 +160,10 @@
       "contextBundle": "/context/wil-cosgrove-context.md",
       "llmGuide": "/llms.txt"
     }
-  }
+  },
+  "experience": [
+    "Project Director, Cue Insights (market research), 2024-2026",
+    "Student Teacher, AP U.S. History and AP Government, Bethesda-Chevy Chase High School (MCPS), 2024",
+    "Co-founder, community swim school (500+ learners over seven years)"
+  ]
 }

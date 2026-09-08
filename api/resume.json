@@ -5,7 +5,7 @@
     "label": "Curriculum Designer, Educator, and Researcher",
     "email": "wil.cosgrove@gmail.com",
     "phone": "(215) 500-2639",
-    "summary": "Curriculum designer, licensed social studies teacher, and learning systems thinker. M.A. in Curriculum Design and Pedagogy (George Washington University, conferred May 2026); active DC educator license, Social Studies grades 7-12. Taught AP U.S. History and AP Government at Bethesda-Chevy Chase High School (MCPS). Two years directing healthcare market research projects at Cue Insights (2024-2026), where he built the firm's survey analysis platform and its AI-driven qualitative coding tools. Skilled in backward design, assessment design, prompt engineering, and building scalable educational frameworks from the ground up.",
+    "summary": "Curriculum designer, licensed social studies teacher, and learning systems thinker. M.A. in Curriculum Design and Pedagogy (George Washington University, 2026); active DC educator license, Social Studies grades 7-12. Taught AP U.S. History and AP Government at Bethesda-Chevy Chase High School (MCPS). Directed healthcare market research projects at Cue Insights (2024-2026), building the firm's survey analysis platform and its AI-driven qualitative coding tools. Skilled in backward design, assessment design, prompt engineering, and building scalable educational frameworks from the ground up.",
     "location": {
       "city": "Washington",
       "region": "DC",
@@ -23,8 +23,8 @@
       "institution": "George Washington University",
       "area": "Curriculum Design and Pedagogy, Concentration in Interdisciplinary Studies",
       "studyType": "Master of Arts",
-      "startDate": "2024-08",
-      "endDate": "2026-05",
+      "startDate": "2024",
+      "endDate": "2026",
       "score": "GSEHD Merit Scholarship",
       "courses": [
         "CPED 6608 Development and Diversity",
@@ -37,8 +37,8 @@
       "institution": "American University",
       "area": "History and Secondary Education (Dual Major)",
       "studyType": "Bachelor of Arts",
-      "startDate": "2020-08",
-      "endDate": "2024-05",
+      "startDate": "2020",
+      "endDate": "2024",
       "score": "Dean's Scholar (merit scholarship), Dean's List"
     }
   ],
@@ -46,7 +46,7 @@
     {
       "name": "Cue Insights",
       "position": "Project Director",
-      "startDate": "2024-05",
+      "startDate": "2024",
       "summary": "Market research firm specializing in healthcare and pharmaceutical research.",
       "highlights": [
         "Synthesized complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients",
@@ -55,25 +55,25 @@
         "Presented research findings directly to senior client stakeholders",
         "Evaluated survey instruments for measurement validity and reliability"
       ],
-      "endDate": "2026-05"
+      "endDate": "2026"
     },
     {
       "name": "George Washington University",
       "position": "Curriculum Designer and Researcher (Graduate)",
-      "startDate": "2024-08",
+      "startDate": "2024",
       "highlights": [
         "Designed an original metacognitive curriculum framework (Axiomatica) synthesizing Dewey, Bruner, Fink, Pinar, and schema theory",
         "Partnered with GW Open-Source Program Office to design gamified U.S. history simulation",
         "Created self-paced instructional module for AI-assisted lesson planning",
         "Developed AI in Civics curriculum for secondary students"
       ],
-      "endDate": "2026-05"
+      "endDate": "2026"
     },
     {
       "name": "Bethesda-Chevy Chase High School (MCPS)",
       "position": "Student Teacher, AP US History and AP Government",
-      "startDate": "2024-01",
-      "endDate": "2024-05",
+      "startDate": "2024",
+      "endDate": "2024",
       "highlights": [
         "Designed and independently led instruction for five AP sections",
         "Constructed original AP Government curriculum around democratic institutions and federalism",
@@ -84,8 +84,8 @@
     {
       "name": "Swim Safe",
       "position": "Co-Founder, Co-CEO, and Lead Instructor",
-      "startDate": "2017-05",
-      "endDate": "2024-08",
+      "startDate": "2017",
+      "endDate": "2024",
       "highlights": [
         "Co-founded and scaled community swim safety school serving 500+ students",
         "Designed individualized adaptive curriculum for diverse learners",
@@ -164,15 +164,15 @@
     {
       "organization": "Hope Multiplied",
       "position": "Volunteer",
-      "startDate": "2023-03",
-      "endDate": "2025-06",
+      "startDate": "2023",
+      "endDate": "2025",
       "summary": "Weekly food distribution across underserved neighborhoods and schools in the DMV"
     },
     {
       "organization": "American University Swim and Dive",
       "position": "NCAA Division 1 Varsity Swimmer",
-      "startDate": "2020-08",
-      "endDate": "2024-03",
+      "startDate": "2020",
+      "endDate": "2024",
       "summary": "20+ hours/week training. Special Olympics coaching, youth swim instruction, and service projects."
     }
   ],
