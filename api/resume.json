@@ -5,7 +5,7 @@
     "label": "Curriculum Designer, Educator, and Researcher",
     "email": "wil.cosgrove@gmail.com",
     "phone": "(215) 500-2639",
-    "summary": "Curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. Experienced in designing onboarding and training content, translating complex research into actionable learning experiences, and managing cross-functional projects in fast-paced environments. Skilled in prompt engineering, data-driven insight delivery, and building scalable educational frameworks from the ground up.",
+    "summary": "Curriculum designer, licensed social studies teacher, and learning systems thinker. M.A. in Curriculum Design and Pedagogy (George Washington University, conferred May 2026); active DC educator license, Social Studies grades 7-12. Taught AP U.S. History and AP Government at Bethesda-Chevy Chase High School (MCPS). Two years directing healthcare market research projects at Cue Insights (2024-2026), where he built the firm's survey analysis platform and its AI-driven qualitative coding tools. Skilled in backward design, assessment design, prompt engineering, and building scalable educational frameworks from the ground up.",
     "location": {
       "city": "Washington",
       "region": "DC",
@@ -49,23 +49,25 @@
       "startDate": "2024-05",
       "summary": "Market research firm specializing in healthcare and pharmaceutical research.",
       "highlights": [
-        "Synthesize complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients",
+        "Synthesized complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients",
         "Designed and built QGen, a company-wide project management and survey analysis platform",
         "Developed AI-driven qualitative coding tools replacing manual coding processes",
-        "Present research findings directly to senior client stakeholders",
-        "Evaluate survey instruments for measurement validity and reliability"
-      ]
+        "Presented research findings directly to senior client stakeholders",
+        "Evaluated survey instruments for measurement validity and reliability"
+      ],
+      "endDate": "2026-05"
     },
     {
       "name": "George Washington University",
       "position": "Curriculum Designer and Researcher (Graduate)",
       "startDate": "2024-08",
       "highlights": [
-        "Designing original metacognitive curriculum framework (Axiomatica) synthesizing Dewey, Bruner, Fink, Pinar, and schema theory",
+        "Designed an original metacognitive curriculum framework (Axiomatica) synthesizing Dewey, Bruner, Fink, Pinar, and schema theory",
         "Partnered with GW Open-Source Program Office to design gamified U.S. history simulation",
         "Created self-paced instructional module for AI-assisted lesson planning",
         "Developed AI in Civics curriculum for secondary students"
-      ]
+      ],
+      "endDate": "2026-05"
     },
     {
       "name": "Bethesda-Chevy Chase High School (MCPS)",

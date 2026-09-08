@@ -7,10 +7,16 @@
     "email": "wil.cosgrove@gmail.com",
     "phone": "(215) 500-2639"
   },
-  "summary": "Curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. Completing MA at George Washington University with thesis arguing K-12 education should be reorganized around metacognition rather than prescribed content.",
-  "currentRoles": [
-    "MA Candidate, George Washington University (Spring 2026)",
-    "Project Director, Cue Insights (Market Research)"
+  "summary": "Curriculum designer, licensed social studies teacher, and learning systems thinker. M.A. in Curriculum Design and Pedagogy from George Washington University (conferred May 2026); the thesis argues K-12 education should be reorganized around metacognition rather than prescribed content. Active DC educator license, Social Studies grades 7-12.",
+  "currentStatus": [
+    "M.A., Curriculum Design and Pedagogy, George Washington University (conferred May 2026)",
+    "Licensed social studies teacher (DC / OSSE, grades 7-12); seeking a classroom or curriculum design role",
+    "Author, Same Means, New End: A Metacognitive End for American Curriculum"
+  ],
+  "previousRoles": [
+    "Project Director, Cue Insights (market research), May 2024 - May 2026",
+    "Student Teacher, AP U.S. History and AP Government, Bethesda-Chevy Chase High School (MCPS), 2024",
+    "Co-founder, community swim school (500+ learners over seven years)"
   ],
   "targetOpportunities": [
     "Curriculum Design",
@@ -26,7 +32,13 @@
       "title": "Same Means, New End: A Metacognitive End for American Curriculum",
       "institution": "George Washington University, GSEHD",
       "argument": "K-12 education should be reorganized around how students think (metacognition) rather than prescribed content.",
-      "theorists": ["John Dewey", "Jerome Bruner", "L. Dee Fink", "William Pinar", "Schema Theory"],
+      "theorists": [
+        "John Dewey",
+        "Jerome Bruner",
+        "L. Dee Fink",
+        "William Pinar",
+        "Schema Theory"
+      ],
       "framework": "Axiomatica"
     },
     "keyConcepts": {
@@ -76,13 +88,20 @@
       "degree": "MA in Curriculum Design and Pedagogy",
       "concentration": "Interdisciplinary Studies",
       "graduationDate": "Spring 2026",
-      "honors": ["GSEHD Merit Scholarship", "Graduate Certificate in Curriculum Writing, Evaluation, and Development"]
+      "honors": [
+        "GSEHD Merit Scholarship",
+        "Graduate Certificate in Curriculum Writing, Evaluation, and Development"
+      ]
     },
     {
       "institution": "American University",
       "degree": "BA in History and Secondary Education (Dual Major)",
       "graduationDate": "May 2024",
-      "honors": ["Dean's Scholar (merit scholarship)", "Dean's List", "NCAA Division 1 Varsity Swimmer"]
+      "honors": [
+        "Dean's Scholar (merit scholarship)",
+        "Dean's List",
+        "NCAA Division 1 Varsity Swimmer"
+      ]
     }
   ],
   "credentials": [
@@ -92,9 +111,32 @@
     "Praxis: Principles of Learning and Teaching - Passed"
   ],
   "skills": {
-    "curriculumDesign": ["Curriculum Architecture", "Backward Planning (UBD)", "UDL", "Instructional Writing", "Equity Adaptation", "PBL", "Assessment Design"],
-    "technology": ["Prompt Engineering", "GenAI Integration", "Python", "SPSS", "Docker", "Web Design", "Canvas", "Local AI Agents"],
-    "research": ["Qualitative Analysis", "Quantitative Analysis", "Stakeholder Reporting", "Policy Analysis", "Cross-Functional Management"]
+    "curriculumDesign": [
+      "Curriculum Architecture",
+      "Backward Planning (UBD)",
+      "UDL",
+      "Instructional Writing",
+      "Equity Adaptation",
+      "PBL",
+      "Assessment Design"
+    ],
+    "technology": [
+      "Prompt Engineering",
+      "GenAI Integration",
+      "Python",
+      "SPSS",
+      "Docker",
+      "Web Design",
+      "Canvas",
+      "Local AI Agents"
+    ],
+    "research": [
+      "Qualitative Analysis",
+      "Quantitative Analysis",
+      "Stakeholder Reporting",
+      "Policy Analysis",
+      "Cross-Functional Management"
+    ]
   },
   "aiPhilosophy": {
     "summary": "AI is a tool, not a replacement for thinking. School district AI policies tend to be defensive rather than reimagining curriculum. The historical pattern with technology in education follows the same arc: panic, prohibition, integration, redesign. AI should accelerate the move toward metacognition-centered learning.",

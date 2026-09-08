@@ -13,9 +13,9 @@
 
 ## Professional Summary
 
-Wil Cosgrove is a curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. He is completing his MA in Curriculum Design and Pedagogy at George Washington University (projected Spring 2026) and holds a BA in History and Secondary Education from American University (May 2024).
+Wil Cosgrove is a curriculum designer and learning systems thinker with graduate-level training in instructional design, AI-integrated pedagogy, and equity-centered education. He holds an MA in Curriculum Design and Pedagogy from George Washington University (conferred May 2026) and a BA in History and Secondary Education from American University (May 2024).
 
-He currently works as a Project Director at Cue Insights, a market research firm, where he translates complex qualitative and quantitative data into strategic recommendations for healthcare and pharmaceutical clients. He has also designed and built company-wide data infrastructure and AI-driven analysis tools.
+From May 2024 to May 2026 he was a Project Director at Cue Insights, a healthcare market research firm, where he translated complex qualitative and quantitative data into strategic recommendations for healthcare and pharmaceutical clients. He has also designed and built company-wide data infrastructure and AI-driven analysis tools.
 
 Before his current role, he taught AP US History and AP Government at Bethesda-Chevy Chase High School in Montgomery County, MD. He co-founded Swim Safe, a community swim school that served over 500 families across seven years.
 
@@ -23,7 +23,7 @@ What connects each experience is a simple conviction: the way we teach matters a
 
 ## Education
 
-### George Washington University (Projected: Spring 2026)
+### George Washington University (M.A. conferred May 2026)
 - Master of Arts in Curriculum Design and Pedagogy
 - Concentration in Interdisciplinary Studies
 - GSEHD Merit Scholarship
@@ -67,15 +67,15 @@ Structural K-12 reform and school redesign; curriculum architecture and student 
 
 ## Professional Experience
 
-### Project Director, Cue Insights (May 2024 - Present)
-- Synthesizes complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients
+### Project Director, Cue Insights (May 2024 - May 2026)
+- Synthesized complex qualitative and quantitative research into strategic recommendations for healthcare and pharmaceutical clients
 - Designed and built QGen, a company-wide project management and survey analysis platform (automates questionnaire construction, SPSS data validation, incidence rate calculation, data visualization, crosstab generation)
 - Developed AI-driven qualitative coding tools replacing manual coding processes
-- Presents research findings directly to senior client stakeholders
-- Coordinates cross-functional teams and client stakeholder relationships
-- Evaluates survey instruments for measurement validity and reliability
+- Presented research findings directly to senior client stakeholders
+- Coordinated cross-functional teams and client stakeholder relationships
+- Evaluated survey instruments for measurement validity and reliability
 
-### Curriculum Designer and Researcher, GW (2024 - Present)
+### Curriculum Designer and Researcher, GW (2024 - 2026)
 - Designing original metacognitive curriculum framework (Axiomatica)
 - Partnered with GW's Open-Source Program Office, CS faculty, and digital artists to design a gamified U.S. history simulation
 - Created self-paced instructional module for AI-assisted lesson planning (published online)
